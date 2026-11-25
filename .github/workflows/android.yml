@@ -1,0 +1,100 @@
+name: 안드로이드 앱 만들기
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      APP_ID: com.tony410234.dragontower
+      APP_NAME: 용의 탑
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: 게임 파일 준비
+        run: |
+          mkdir -p cap/www
+          cp index.html manifest.json sw.js icon-*.png cap/www/
+
+      - name: Capacitor 안드로이드 프로젝트 만들기
+        working-directory: cap
+        run: |
+          npm init -y >/dev/null
+          npm i @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8
+          npx cap init "$APP_NAME" "$APP_ID" --web-dir www
+          npx cap add android
+          npx cap sync android
+
+      - name: 버전 번호 / 세로 화면 설정
+        working-directory: cap/android
+        run: |
+          sed -i -E "s/versionCode [0-9]+/versionCode ${{ github.run_number }}/" app/build.gradle
+          sed -i -E "s/versionName \"[^\"]*\"/versionName \"1.0.${{ github.run_number }}\"/" app/build.gradle
+          sed -i 's/android:name=".MainActivity"/android:name=".MainActivity" android:screenOrientation="portrait"/' app/src/main/AndroidManifest.xml
+          grep -E "versionCode|versionName" app/build.gradle
+          grep -E "compileSdk|targetSdk|minSdk" variables.gradle
+
+      - name: 앱 아이콘 / 시작 화면 만들기
+        run: |
+          pip install --quiet pillow
+          python3 - <<'PY'
+          import os, glob
+          from PIL import Image
+          res = 'cap/android/app/src/main/res'
+          icon = Image.open('icon-512.png').convert('RGBA')
+          mask = Image.open('icon-maskable-512.png').convert('RGBA')
+          legacy = {'mdpi': 48, 'hdpi': 72, 'xhdpi': 96, 'xxhdpi': 144, 'xxxhdpi': 192}
+          for d, s in legacy.items():
+              folder = f'{res}/mipmap-{d}'
+              os.makedirs(folder, exist_ok=True)
+              icon.resize((s, s), Image.LANCZOS).save(f'{folder}/ic_launcher.png')
+              icon.resize((s, s), Image.LANCZOS).save(f'{folder}/ic_launcher_round.png')
+              f = s * 108 // 48
+              canvas = Image.new('RGBA', (f, f), (0, 0, 0, 0))
+              inner = int(f * 0.84)
+              m = mask.resize((inner, inner), Image.LANCZOS)
+              canvas.paste(m, ((f - inner) // 2, (f - inner) // 2), m)
+              canvas.save(f'{folder}/ic_launcher_foreground.png')
+          for p in glob.glob(f'{res}/values/ic_launcher_background.xml'):
+              open(p, 'w').write('<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">#4A2230</color>\n</resources>\n')
+          for p in glob.glob(f'{res}/**/splash.png', recursive=True):
+              w, h = Image.open(p).size
+              sp = Image.new('RGBA', (w, h), (20, 10, 16, 255))
+              s = min(w, h) // 3
+              ic = icon.resize((s, s), Image.LANCZOS)
+              sp.paste(ic, ((w - s) // 2, (h - s) // 2), ic)
+              sp.convert('RGB').save(p)
+          print('아이콘/시작화면 완료')
+          PY
+
+      - name: 서명 키 준비
+        run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 -d > cap/android/app/upload.jks
+
+      - name: 앱 빌드 (AAB + APK)
+        working-directory: cap/android
+        run: |
+          chmod +x gradlew
+          ./gradlew bundleRelease assembleRelease --no-daemon \
+            -Pandroid.injected.signing.store.file=$PWD/app/upload.jks \
+            -Pandroid.injected.signing.store.password="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
+            -Pandroid.injected.signing.key.alias=upload \
+            -Pandroid.injected.signing.key.password="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+          mkdir -p ../../out
+          cp app/build/outputs/bundle/release/app-release.aab ../../out/dragon-tower-${{ github.run_number }}.aab
+          cp app/build/outputs/apk/release/app-release.apk ../../out/dragon-tower-${{ github.run_number }}.apk
+          rm -f app/upload.jks
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dragon-tower-app-${{ github.run_number }}
+          path: out/
