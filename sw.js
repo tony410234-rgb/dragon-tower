@@ -1,5 +1,5 @@
 // 용의 탑 — 오프라인 실행용. 게임을 고쳐 다시 올릴 때는 VERSION 숫자를 올려 주세요.
-const VERSION = 'dragon-tower-v2';
+const VERSION = 'dragon-tower-v5';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
