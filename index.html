@@ -11,108 +11,141 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-/* VOICE: 동화책 같은 판타지 모험, 한 판 10~20분
+/* VOICE: 동화책 같은 판타지 모험, 한 판 15~25분
    IDEA: 횃불 켜진 탑을 한 층씩 오르는 원정 일지와 카드 테이블
-   PICTURE: 돌바닥 위에서 마주 선 용사와 괴물들
+   PICTURE: 돌바닥 위에서 마주 선 용사와 괴물들, 갈림길 지도
    COLOUR+TYPE: 깊은 와인빛 돌벽, 양피지 카드, 청록 마나, 붉은 체력 / Black Han Sans + Noto Sans KR
    LAYOUT: 상단 상태바, 가운데 전장, 하단 손패 — 폰 세로 화면 전용 */
-:root{color-scheme:dark;--wall:#4a2230;--deep:#1c0d15;--parch:#f5ecd9;--ink:#24151b;--hp:#e5452f;--gold:#f0c04a;--mana:#3fd1c4;--atk:#c93a2a;--mag:#2a8fd8;--def:#5b7a8c;--skl:#3f9a5a}
+:root{color-scheme:dark;--wall:#4a2230;--deep:#1c0d15;--parch:#f5ecd9;--ink:#24151b;--hp:#e5452f;--gold:#f0c04a;--mana:#3fd1c4;--atk:#c93a2a;--mag:#2a8fd8;--def:#5b7a8c;--skl:#3f9a5a;--soft:#e8c9b0}
 *{box-sizing:border-box;min-width:0}
 html,body{min-height:100%;overscroll-behavior:none}
 body{margin:0;background:radial-gradient(130% 70% at 50% 0,#6a2f40,var(--wall) 45%,var(--deep));background-attachment:fixed;color:var(--parch);font:15px/1.45 "Noto Sans KR",system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 #app{max-width:760px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-h1,h2{font-family:"Black Han Sans",sans-serif;font-weight:400;line-height:1.05;margin:0;text-wrap:balance}
-h1{font-size:clamp(40px,12vw,60px)}h2{font-size:30px}
+h1,h2,h3{font-family:"Black Han Sans",sans-serif;font-weight:400;line-height:1.05;margin:0;text-wrap:balance}
+h1{font-size:clamp(40px,12vw,60px)}h2{font-size:30px}h3{font-size:22px}
 p{margin:0}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;min-height:44px;padding:0}
 button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .btn{background:var(--hp);color:#fff;border-radius:12px;padding:10px 20px;font-weight:900;box-shadow:0 4px 0 #8f2416}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #8f2416}
 .btn.alt{background:var(--parch);color:var(--ink);box-shadow:0 4px 0 #b4a688}
+.btn.ghost{background:rgba(255,255,255,.08);color:var(--parch);box-shadow:none}
 .btn[disabled]{opacity:.4;pointer-events:none}
-.bar{display:flex;align-items:center;gap:10px 14px;padding:10px 14px;background:rgba(20,8,13,.65);font-weight:700;flex-wrap:wrap;position:sticky;top:0;z-index:5}
-.hp{flex:1 1 150px;height:18px;background:#3d1512;border-radius:9px;overflow:hidden;position:relative}
+.soft{color:var(--soft)}
+.bar{display:flex;align-items:center;gap:8px 12px;padding:8px 12px;background:rgba(20,8,13,.7);font-weight:700;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+.hp{flex:1 1 130px;height:18px;background:#3d1512;border-radius:9px;overflow:hidden;position:relative}
 .hp i{display:block;height:100%;background:linear-gradient(#ff7c62,#c93a2a);transition:width .3s}
 .hp span{position:absolute;inset:0;text-align:center;font-size:13px;line-height:18px;text-shadow:0 1px 2px #000}
-.gold{color:var(--gold)}.chip{white-space:nowrap}
-.bar .btn{min-height:36px;padding:4px 12px;font-size:14px}
-.wrap{padding:20px max(4vw,14px);display:flex;flex-direction:column;gap:16px;flex:1}
-.hero{position:relative;aspect-ratio:16/11;max-height:46vh;width:100%;border-radius:18px;overflow:hidden}
+.gold{color:var(--gold)}.chip{white-space:nowrap;font-size:14px}
+.bar .btn{min-height:36px;padding:4px 10px;font-size:14px}
+.ico{width:36px;min-height:36px;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.1)}
+.ico svg{width:20px;height:20px}
+.rels{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap}
+.rel{width:30px;min-height:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff8,transparent 45%),var(--rc);color:#fff;font-weight:900;font-size:14px;display:grid;place-items:center;box-shadow:0 2px 0 rgba(0,0,0,.4),inset 0 0 0 2px rgba(255,255,255,.35);text-shadow:0 1px 2px #000}
+.rel.big{width:64px;height:64px;font-size:28px}
+.wrap{padding:18px max(4vw,14px);display:flex;flex-direction:column;gap:16px;flex:1}
+.hero{position:relative;aspect-ratio:16/11;max-height:44vh;width:100%;border-radius:18px;overflow:hidden}
 .hero svg{position:absolute;inset:0;width:100%;height:100%}
-.rules{display:grid;gap:8px;background:rgba(20,8,13,.5);border-radius:14px;padding:14px 16px}
-.rules b{color:var(--gold)}
 .row-btns{display:flex;gap:12px;flex-wrap:wrap}
-.chart{position:relative;display:flex;flex-direction:column;gap:10px;padding:8px 0 24px}
-.chart::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:3px dashed rgba(245,236,217,.2)}
-.mrow{position:relative;display:flex;justify-content:center;gap:clamp(10px,5vw,34px);padding:6px;border-radius:16px}
-.mrow.cur{background:rgba(240,192,74,.14);box-shadow:inset 0 0 0 2px rgba(240,192,74,.6)}
-.mrow.past{opacity:.38}
-.rn{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:13px;color:#e8c9b0}
-.node{width:66px;min-height:66px;border-radius:50%;background:var(--parch);color:var(--ink);display:grid;place-items:center;align-content:center;box-shadow:0 4px 0 rgba(0,0,0,.4);position:relative}
-.node svg{width:28px;height:28px}.node small{font-size:13px;font-weight:900;line-height:1}
-.node[disabled]{cursor:default}
-.mrow.cur .node{animation:bob 1.6s ease-in-out infinite}
-.node.went{box-shadow:0 0 0 4px var(--gold),0 4px 0 rgba(0,0,0,.4)}
-.n-elite{background:#ffd3c9}.n-boss{background:var(--hp);color:#fff;width:84px;min-height:84px}
-.n-rest{background:#dcf0df}.n-shop{background:#ffefc4}.n-treasure{background:#d3f3ef}
-@keyframes bob{50%{transform:translateY(-4px)}}
-.field{position:relative;display:grid;grid-template-columns:minmax(0,32%) minmax(0,1fr);align-items:end;gap:8px;padding:14px 10px 18px;min-height:clamp(250px,42vh,360px);background:linear-gradient(transparent 63%,#5b4a48 63%,#3e3133);overflow:hidden}
+.panel{background:rgba(20,8,13,.55);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.center{text-align:center;align-items:center}
+/* 용사 선택 */
+.heroes{display:grid;gap:14px}
+.hc{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;align-items:center;background:rgba(20,8,13,.55);border-radius:18px;padding:12px;border:2px solid transparent;text-align:left}
+.hc:active{border-color:var(--gold)}
+.hc .spr{max-width:110px}
+.hc b{display:block;font:22px "Black Han Sans",sans-serif;font-weight:400}
+.hc .tags{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.tag{font-size:12px;font-weight:700;padding:2px 8px;border-radius:9px;background:rgba(255,255,255,.12);white-space:nowrap}
+.hc p{font-size:14px;color:var(--soft)}
+/* 지도 */
+.mapbox{position:relative;width:100%;max-width:520px;margin:0 auto}
+.mapbox>svg{position:absolute;inset:0;width:100%;height:100%}
+.node{position:absolute;transform:translate(-50%,-50%);width:58px;min-height:58px;height:58px;border-radius:50%;background:var(--parch);color:var(--ink);display:grid;place-items:center;align-content:center;box-shadow:0 4px 0 rgba(0,0,0,.45)}
+.node svg{width:24px;height:24px}.node small{font-size:12px;font-weight:900;line-height:1}
+.node.off{opacity:.5;cursor:default}
+.node.can{animation:pulse 1.3s ease-in-out infinite;box-shadow:0 0 0 4px var(--gold),0 4px 0 rgba(0,0,0,.45)}
+.node.went{opacity:1;box-shadow:0 0 0 4px #b98a2a,0 4px 0 rgba(0,0,0,.45);filter:saturate(.6)}
+.n-elite{background:#ffd3c9}.n-boss{background:var(--hp);color:#fff;width:80px;height:80px}
+.n-rest{background:#dcf0df}.n-shop{background:#ffefc4}.n-treasure{background:#d3f3ef}.n-event{background:#e6dcf5}
+@keyframes pulse{50%{transform:translate(-50%,-50%) scale(1.08)}}
+/* 전투 */
+.field{position:relative;display:grid;grid-template-columns:minmax(0,32%) minmax(0,1fr);align-items:end;gap:8px;padding:14px 10px 18px;min-height:clamp(260px,42vh,360px);background:linear-gradient(transparent 63%,#5b4a48 63%,#3e3133);overflow:hidden}
+.field.boss{background:linear-gradient(#3a0d10,transparent 50%),linear-gradient(transparent 63%,#4a2a26 63%,#2e1a18)}
 .field::before{content:"";position:absolute;inset:auto 0 0 0;height:37%;background:repeating-linear-gradient(90deg,transparent 0 70px,rgba(0,0,0,.28) 70px 73px),repeating-linear-gradient(0deg,transparent 0 30px,rgba(0,0,0,.2) 30px 32px);pointer-events:none}
-.field::after{content:"";position:absolute;top:18px;left:50%;width:14px;height:30px;border-radius:50% 50% 40% 40%;background:radial-gradient(#fff3b0,#ff9a2e 60%,transparent 70%);filter:blur(1px);box-shadow:0 0 60px 30px rgba(255,150,50,.18);animation:flick 1.2s infinite alternate}
-@keyframes flick{to{transform:scale(1.08,.94)}}
+.torch{position:absolute;top:16px;width:14px;height:30px;border-radius:50% 50% 40% 40%;background:radial-gradient(#fff3b0,#ff9a2e 60%,transparent 70%);box-shadow:0 0 60px 30px rgba(255,150,50,.16);animation:flick 1.2s infinite alternate}
+@keyframes flick{to{transform:scale(1.08,.92)}}
 .ent{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:1}
 .spr{width:100%;max-width:130px;aspect-ratio:1}.spr svg{width:100%;height:100%;display:block}
-.foes{display:flex;justify-content:space-around;align-items:flex-end;gap:4px;flex-wrap:wrap}
+.foes{display:flex;justify-content:space-around;align-items:flex-end;gap:4px}
 .foe{flex:1 1 0;max-width:150px;border-radius:14px;padding:4px 3px;border:2px solid transparent}
 .foe.sel{border-color:var(--gold);background:rgba(240,192,74,.12)}
-.foe.boss{max-width:200px}.foe.boss .spr{max-width:190px}
+.foe.boss{max-width:210px}.foe.boss .spr{max-width:200px}
+.foe.dying{animation:die .6s forwards;pointer-events:none}.foe.gone{visibility:hidden;pointer-events:none}
+@keyframes die{to{opacity:0;transform:translateY(10px) scale(.85);filter:brightness(3)}}
+.lunge .spr{animation:lunge .32s}
+@keyframes lunge{40%{transform:translateX(-26px) scale(1.06)}}
+.quake{animation:shk .35s}
 .nm{font-size:13px;font-weight:700;text-align:center;line-height:1.2;text-shadow:0 1px 2px #000}
 .mini{width:100%;height:12px;background:#3d1512;border-radius:6px;position:relative;overflow:hidden}
 .mini i{display:block;height:100%;background:#e0482e;transition:width .3s}
 .mini span{position:absolute;inset:0;font-size:11px;line-height:12px;text-align:center;font-weight:700;text-shadow:0 1px 1px #000}
 .sts{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;min-height:20px}
 .st{font-size:12px;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(0,0,0,.5);white-space:nowrap}
-.st.blk{background:#4f7c99}.st.vul{background:#8e3fb0}.st.weak{background:#6b6b6b}.st.bleed{background:#a3161e}.st.str{background:#b5651d}
+.st.blk{background:#4f7c99}.st.vul{background:#8e3fb0}.st.weak{background:#6b6b6b}.st.bleed{background:#a3161e}.st.burn{background:#d9661a}.st.str{background:#b5651d}.st.thorns{background:#5d6b52}.st.keep,.st.plate{background:#55707f}.st.venom{background:#4a8a2a}
 .int{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;min-height:26px}
 .int em{font-style:normal;font-weight:900;font-size:13px;display:inline-flex;align-items:center;gap:2px;background:var(--parch);color:var(--ink);padding:2px 7px;border-radius:10px;white-space:nowrap}
-.int em svg{width:14px;height:14px}.int .ia{background:#ffd2c7;color:#8f1f0c}.int .ib{background:#d3e4ee;color:#1d3f55}
-.res{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(20,8,13,.6);flex-wrap:wrap}
+.int em svg{width:14px;height:14px}.int .ia{background:#ffd2c7;color:#8f1f0c}.int .ib{background:#d3e4ee;color:#1d3f55}.int .ih{background:#d4f2dc;color:#1d5a2c}
+.res{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(20,8,13,.65);flex-wrap:wrap}
 .orb{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a8,var(--gold) 55%,#9a6b00);color:#3a2500;display:grid;place-items:center;font:22px "Black Han Sans",sans-serif;box-shadow:0 3px 0 rgba(0,0,0,.4);flex:none}
-.mana{display:flex;gap:5px;align-items:center}
+.mana{display:flex;gap:4px;align-items:center}
 .gem{width:16px;height:22px;clip-path:polygon(50% 0,100% 40%,50% 100%,0 40%);background:#1d4d49}
 .gem.on{background:linear-gradient(#bff7f1,var(--mana) 60%,#178b80)}
-.pile{font-size:13px;color:#e8c9b0;line-height:1.3}
-.res .btn{margin-left:auto}
-.hand{display:flex;gap:8px;overflow-x:auto;padding:14px 12px 22px;scroll-snap-type:x proximity;justify-content:safe center}
-.card{--c:var(--skl);flex:none;width:112px;height:158px;border-radius:12px;background:var(--parch);color:var(--ink);position:relative;padding:30px 7px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;box-shadow:0 5px 0 rgba(0,0,0,.4);border-top:22px solid var(--c);scroll-snap-align:center;transition:transform .12s}
+.pile{font-size:13px;color:var(--soft);line-height:1.3;text-align:left;min-height:40px}
+.res .end{margin-left:auto}
+.hand{display:flex;gap:8px;overflow-x:auto;padding:14px 12px 22px;scroll-snap-type:x proximity;justify-content:safe center;min-height:200px}
+.hand.deal .card{animation:deal .35s backwards}
+.hand.deal .card:nth-child(2){animation-delay:.05s}.hand.deal .card:nth-child(3){animation-delay:.1s}.hand.deal .card:nth-child(4){animation-delay:.15s}.hand.deal .card:nth-child(5){animation-delay:.2s}.hand.deal .card:nth-child(n+6){animation-delay:.25s}
+@keyframes deal{from{transform:translateY(80px) rotate(8deg);opacity:0}}
+/* 카드 */
+.card{--c:var(--skl);flex:none;width:112px;height:160px;border-radius:12px;background:var(--parch);color:var(--ink);position:relative;padding:30px 7px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;box-shadow:0 5px 0 rgba(0,0,0,.4);border-top:22px solid var(--c);scroll-snap-align:center;transition:transform .12s}
 .card:active{transform:translateY(-6px)}
 .card.t-atk{--c:var(--atk)}.card.t-mag{--c:var(--mag)}.card.t-def{--c:var(--def)}
+.card.r-u{box-shadow:0 5px 0 rgba(0,0,0,.4),inset 0 0 0 2px #5aa0e0}
+.card.r-r{box-shadow:0 5px 0 rgba(0,0,0,.4),inset 0 0 0 3px var(--gold),0 0 14px rgba(240,192,74,.5)}
 .card.no{opacity:.45}
 .card.up .cn{color:#2c7a43}
 .cost{position:absolute;top:-30px;left:-8px;width:32px;height:32px;border-radius:50%;background:var(--gold);color:#3a2500;display:grid;place-items:center;font:18px "Black Han Sans",sans-serif;box-shadow:0 2px 0 rgba(0,0,0,.4)}
-.am{position:absolute;top:-17px;right:8px;display:flex;gap:3px}
+.am{position:absolute;top:-18px;right:8px;display:flex;gap:3px;align-items:center;font-style:normal;font-weight:900;font-size:12px;color:#bff7f1}
 .am u{width:10px;height:14px;clip-path:polygon(50% 0,100% 40%,50% 100%,0 40%);background:#bff7f1}
 .cn{font-weight:900;font-size:14px;line-height:1.15}
-.ct{font-size:12px;font-weight:700;color:var(--c)}
+.ct{font-size:12px;font-weight:700;color:var(--c);display:flex;align-items:center;gap:3px}
+.ct svg{width:12px;height:12px}
 .cd{font-size:13px;line-height:1.3;margin-block:auto}
 .grid{display:flex;flex-wrap:wrap;gap:22px 12px;justify-content:center;padding-top:14px}
 .price{display:block;text-align:center;font-weight:900;color:var(--gold);margin-top:8px}
 .sold{opacity:.25;pointer-events:none}
-.panel{background:rgba(20,8,13,.55);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
-.center{text-align:center;align-items:center}
-.modal{position:fixed;inset:0;background:rgba(20,8,13,.94);z-index:20;overflow:auto;padding:calc(16px + env(safe-area-inset-top)) 14px 40px}
+.relrow{display:flex;gap:12px;align-items:center;text-align:left}
+.modal{position:fixed;inset:0;background:rgba(20,8,13,.95);z-index:20;overflow:auto;padding:calc(16px + env(safe-area-inset-top)) 14px 40px}
 .modal .in{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
-.mh{display:flex;align-items:center;gap:12px;justify-content:space-between;position:sticky;top:0;background:rgba(20,8,13,.96);padding:6px 0;z-index:2}
+.mh{display:flex;align-items:center;gap:12px;justify-content:space-between;position:sticky;top:0;background:rgba(20,8,13,.97);padding:6px 0;z-index:2}
+.tog{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1);font-weight:700}
+.tog .btn{min-width:84px}
+.gl{display:grid;gap:8px}.gl p{font-size:14px}.gl b{color:var(--gold)}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:30}
-.fl{position:fixed;transform:translate(-50%,0);font:28px "Black Han Sans",sans-serif;text-shadow:0 2px 0 #000,0 0 8px #000;animation:up .9s ease-out forwards}
+.fl{position:fixed;transform:translate(-50%,0);font:26px "Black Han Sans",sans-serif;text-shadow:0 2px 0 #000,0 0 8px #000;animation:up .9s ease-out forwards;white-space:nowrap}
 .fl.r{color:#ff6b4f}.fl.b{color:#9cc9e6}.fl.g{color:#7fe0a0}
 @keyframes up{to{transform:translate(-50%,-56px);opacity:0}}
 .shk{animation:shk .35s}
 @keyframes shk{20%{transform:translateX(-7px)}50%{transform:translateX(6px)}80%{transform:translateX(-3px)}}
-#toast{position:fixed;left:50%;bottom:190px;transform:translateX(-50%);background:var(--parch);color:var(--ink);font-weight:900;padding:8px 16px;border-radius:20px;z-index:40;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.fly{animation:fly .45s ease-in forwards;z-index:31}
+@keyframes fly{to{transform:translateY(-170px) scale(.6) rotate(-8deg);opacity:0}}
+.banner{position:fixed;left:0;right:0;top:34%;text-align:center;font:clamp(30px,9vw,46px) "Black Han Sans",sans-serif;color:var(--parch);text-shadow:0 3px 0 #000,0 0 20px #000;animation:ban 1.1s ease-out forwards;background:linear-gradient(90deg,transparent,rgba(20,8,13,.75) 20%,rgba(20,8,13,.75) 80%,transparent);padding:8px 0}
+@keyframes ban{0%{opacity:0;transform:scaleX(.6)}15%{opacity:1;transform:none}75%{opacity:1}100%{opacity:0}}
+#toast{position:fixed;left:50%;bottom:210px;transform:translateX(-50%);background:var(--parch);color:var(--ink);font-weight:900;padding:8px 16px;border-radius:20px;z-index:40;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
 #toast.on{opacity:1}
-@media(max-width:420px){.card{width:100px;height:150px;padding-inline:5px}.hand{justify-content:flex-start}}
-@media(prefers-reduced-motion:reduce){.shk,.fl,.mrow.cur .node,.field::after{animation:none}.card{transition:none}}
+@media(max-width:420px){.card{width:100px;height:152px;padding-inline:5px}.hand{justify-content:flex-start}.hc{grid-template-columns:86px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.shk,.fl,.node.can,.torch,.lunge .spr,.quake,.hand.deal .card,.banner{animation:none}.fly{display:none}.card{transition:none}}
 </style></head><body>
 <div id="app"></div><div id="fx"></div><div id="toast"></div>
 <script>
@@ -122,181 +155,421 @@ const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const KEY='dragon-tower-run-v1';
-let S=null,B=null,busy=false,FX=[];
-const TL={atk:'근접',mag:'마법',def:'방어',skl:'기술'};
-const NL={battle:'전투',elite:'정예',rest:'휴식',shop:'상점',treasure:'보물',boss:'보스'};
+const KEY='dragon-tower-run-v2',SKEY='dragon-tower-stats-v2',OKEY='dragon-tower-opt';
+const ls={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+let S=null,B=null,M='title',MOD=null,busy=false,FX=[];
 
-/* ---------- 카드 ---------- */
-const C={
-slash:{n:'베기',t:'atk',e:1,v:[6,9],d:v=>`피해 ${v}`,f:v=>hit(v)},
-fire:{n:'화염구',t:'mag',e:1,a:1,v:[10,14],d:v=>`피해 ${v}`,f:v=>hit(v)},
-guard:{n:'방패 들기',t:'def',e:1,v:[5,8],d:v=>`방어도 ${v}`,f:v=>blk(v)},
-med:{n:'명상',t:'skl',e:0,v:[2,3],d:v=>`마나 +${v}`,f:v=>addMana(v)},
-chain:{n:'연쇄 번개',t:'mag',e:1,a:1,v:[7,10],d:v=>`적 전체에게 피해 ${v}`,f:v=>hitAll(v)},
-meteor:{n:'운석 낙하',t:'mag',e:2,a:1,v:[22,30],d:v=>`피해 ${v}`,f:v=>hit(v)},
-arrow:{n:'마법 화살',t:'mag',e:1,a:2,v:[8,11],d:v=>`피해 ${v} × 2`,f:v=>hit(v,2)},
-whirl:{n:'회전 베기',t:'atk',e:1,v:[4,5],d:v=>`피해 ${v} × 3`,f:v=>hit(v,3)},
-thorn:{n:'가시 단검',t:'atk',e:1,v:[7,9],d:v=>`피해 ${v}, 출혈 ${v>7?4:3}`,f:v=>{hit(v);const t=tg();if(t)st(t,'bleed',v>7?4:3)}},
-bomb:{n:'폭발 물약',t:'skl',e:1,x:1,v:[11,15],d:v=>`적 전체에게 피해 ${v}. 소멸`,f:v=>hitAll(v)},
-potion:{n:'회복 물약',t:'skl',e:0,x:1,v:[5,8],d:v=>`체력 ${v} 회복. 소멸`,f:v=>heal(v)},
-wind:{n:'바람 걸음',t:'def',e:1,v:[8,11],d:v=>`방어도 ${v}, 카드 1장 뽑기`,f:v=>{blk(v);draw(1)}},
-dodge:{n:'재빠른 막기',t:'def',e:0,v:[4,7],d:v=>`방어도 ${v}`,f:v=>blk(v)},
-curse:{n:'저주',t:'skl',e:1,v:[2,3],d:v=>`취약 ${v}, 약화 ${v-1}`,f:v=>{const t=tg();if(t){st(t,'vul',v);st(t,'weak',v-1)}}},
-rage:{n:'광전사의 함성',t:'skl',e:1,x:1,v:[2,3],d:v=>`힘 +${v} (전투 동안). 소멸`,f:v=>st(B.p,'str',v)},
-well:{n:'마나의 샘',t:'skl',e:1,v:[1,2],d:v=>`마나 가득, 카드 ${v}장 뽑기`,f:v=>{B.mana=B.maxM;draw(v)}},
-insp:{n:'영감',t:'skl',e:0,v:[2,3],d:v=>`카드 ${v}장 뽑기`,f:v=>draw(v)},
-finish:{n:'마무리 일격',t:'atk',e:2,v:[12,16],d:v=>`피해 ${v}. 대상이 출혈 중이면 2배`,f:v=>{const t=tg();hit(t&&t.st.bleed>0?v*2:v)}},
-frost:{n:'서리 장벽',t:'def',e:2,v:[13,18],d:v=>`방어도 ${v}, 적 전체 약화 1`,f:v=>{blk(v);alive().forEach(e=>st(e,'weak',1))}},
-pouch:{n:'황금 주머니',t:'skl',e:0,x:1,v:[12,20],d:v=>`금화 ${v}, 카드 1장 뽑기. 소멸`,f:v=>{S.gold+=v;draw(1)}},
-holy:{n:'성검 돌격',t:'mag',e:2,a:1,v:[15,20],d:v=>`피해 ${v}, 방어도 ${v>15?9:7}`,f:v=>{hit(v);blk(v>15?9:7)}},
-ward:{n:'마력 방벽',t:'def',e:1,v:[6,9],d:v=>`방어도 ${v}, 마나 +1`,f:v=>{blk(v);addMana(1)}},
+/* ================= 소리: 배경음악 + 효과음 (모두 코드로 합성) ================= */
+const OPT=Object.assign({music:true,sfx:true},ls.get(OKEY,{}));
+const AU={ctx:null,track:null,want:null,next:0,step:0,timer:null,last:{}};
+const fq=m=>440*2**((m-69)/12);
+function auInit(){if(AU.ctx)return;try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const c=AU.ctx=new C();
+ AU.mus=c.createGain();AU.mus.gain.value=OPT.music?.33:0;AU.mus.connect(c.destination);
+ AU.fx=c.createGain();AU.fx.gain.value=OPT.sfx?.55:0;AU.fx.connect(c.destination);
+ const b=AU.nb=c.createBuffer(1,c.sampleRate,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+ AU.timer=setInterval(sched,25)}catch(e){AU.ctx=null}}
+function tone(dst,t,m,dur,type='triangle',vol=.1,att=.01,slide=0,cut=0){const c=AU.ctx,o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(fq(m),t);if(slide)o.frequency.exponentialRampToValueAtTime(fq(m+slide),t+dur);
+ g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+att);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+ let n=o;if(cut){const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=cut;o.connect(f);n=f}n.connect(g);g.connect(dst);o.start(t);o.stop(t+dur+.05)}
+function noise(dst,t,dur,vol=.1,freq=3000,type='highpass'){const c=AU.ctx,s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=AU.nb;f.type=type;f.frequency.value=freq;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);s.connect(f);f.connect(g);g.connect(dst);s.start(t,Math.random()*.5);s.stop(t+dur+.02)}
+function kick(t,v=.5){const c=AU.ctx,o=c.createOscillator(),g=c.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(40,t+.14);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(0.0001,t+.22);o.connect(g);g.connect(AU.mus);o.start(t);o.stop(t+.25)}
+const snare=(t,v=.16)=>{noise(AU.mus,t,.14,v,1800,'bandpass');tone(AU.mus,t,55,.08,'triangle',v*.6)};
+const hat=(t,v=.035)=>noise(AU.mus,t,.035,v,7500);
+const MEL={
+menu:[[[0,76],[6,72],[10,74],[12,76]],[[0,77],[6,76],[10,72]],[[0,72],[4,74],[8,76],[12,79]],[[0,74],[8,71],[12,74]],[[0,76],[4,79],[8,81],[12,79]],[[0,77],[8,76],[12,74]],[[0,76],[6,74],[10,72]],[[0,71],[8,74]]],
+battle:[[],[],[],[],[[0,74],[3,77],[6,81],[10,79],[12,77]],[[0,77],[4,74],[8,74],[12,77]],[[0,76],[4,79],[8,84],[12,79]],[[0,81],[6,79],[8,76],[12,73]]],
+boss:[[[0,76],[3,79],[6,83],[12,81]],[[0,79],[6,76],[8,72],[12,76]],[[0,78],[3,81],[6,86],[12,85]],[[0,83],[4,82],[8,78],[12,75]],[[0,88],[2,86],[4,83],[8,79],[12,83]],[[0,84],[4,79],[8,76],[12,79]],[[0,81],[4,86],[8,85],[12,81]],[[0,78],[4,75],[8,71],[10,75],[12,78]]]
 };
-const START=['slash','fire','guard','med'];
-const POOL=Object.keys(C).filter(k=>!START.includes(k));
+const TR={
+menu:{bpm:78,ch:[[57,60,64],[53,57,60],[55,60,64],[55,59,62]],play(t,s,ch,sp,bar){
+ if(s===0)ch.forEach(m=>tone(AU.mus,t,m,sp*16,'sine',.03,.5));
+ if(s===0||s===8)tone(AU.mus,t,ch[0]-12,sp*8,'triangle',.09,.02);
+ if(s%2===0)tone(AU.mus,t,ch[[0,1,2,1][(s/2)%4]]+12,sp*3,'triangle',.035,.005);
+ MEL.menu[bar].forEach(([at,m])=>{if(at===s)tone(AU.mus,t,m,sp*5,'sine',.06,.02)})}},
+battle:{bpm:136,ch:[[50,53,57],[46,50,53],[48,52,55],[45,49,52]],play(t,s,ch,sp,bar){
+ if(s===0||s===8||(s===10&&bar%2))kick(t,.45);if(s===4||s===12)snare(t);if(s%2===0)hat(t,s%4?.03:.045);
+ if(s%2===0)tone(AU.mus,t,ch[0]-12+(s%4===2?12:0),sp*1.7,'sawtooth',.07,.005,0,900);
+ tone(AU.mus,t,ch[s%3]+24,sp*.9,'triangle',.022,.003);
+ MEL.battle[bar].forEach(([at,m])=>{if(at===s)tone(AU.mus,t,m,sp*3.5,'square',.035,.01,0,2600)})}},
+boss:{bpm:150,ch:[[52,55,59],[48,52,55],[50,54,57],[47,51,54]],play(t,s,ch,sp,bar){
+ if(s%4===0)kick(t,.55);if(s===4||s===12)snare(t,.2);if(bar===7&&s>=12)snare(t,.12);hat(t,s%2?.02:.04);
+ tone(AU.mus,t,ch[0]-12+(s%2?12:0),sp*.95,'sawtooth',.075,.004,0,1100);
+ if(s===0)ch.forEach(m=>tone(AU.mus,t,m+12,sp*16,'sawtooth',.012,.2,0,1400));
+ MEL.boss[bar].forEach(([at,m])=>{if(at===s)tone(AU.mus,t,m,sp*3.5,'square',.04,.01,0,3000)})}}
+};
+function sched(){const c=AU.ctx,tr=TR[AU.track];if(!c||!tr||!OPT.music||c.state!=='running'){if(c)AU.next=c.currentTime+.05;return}
+ const sp=60/tr.bpm/4;if(AU.next<c.currentTime)AU.next=c.currentTime+.03;
+ while(AU.next<c.currentTime+.15){const bar=Math.floor(AU.step/16)%8,s=AU.step%16;try{tr.play(AU.next,s,tr.ch[bar%4],sp,bar)}catch(e){}AU.next+=sp;AU.step++}}
+function music(n){AU.want=n;if(AU.track===n)return;AU.track=n;AU.step=0;if(AU.ctx)AU.next=AU.ctx.currentTime+.1}
+function jingle(win){if(!AU.ctx||!OPT.sfx)return;AU.track=null;const t=AU.ctx.currentTime+.05,f=AU.fx;
+ if(win){[60,64,67,72,76,79,84].forEach((m,i)=>tone(f,t+i*.09,m,.35,'square',.06,.01,0,3000));[72,76,79].forEach(m=>tone(f,t+.7,m,1.4,'triangle',.08,.02))}
+ else{[64,62,60,57,56].forEach((m,i)=>tone(f,t+i*.28,m,.5,'triangle',.09,.02));tone(f,t+1.4,45,1.6,'sawtooth',.05,.05,0,600)}}
+function sfx(n){if(!AU.ctx||!OPT.sfx)return;const c=AU.ctx,t=c.currentTime,f=AU.fx;if(AU.last[n]&&t-AU.last[n]<.045)return;AU.last[n]=t;
+ ({card(){tone(f,t,79,.08,'triangle',.07)},
+ slash(){noise(f,t,.16,.22,2200,'bandpass');tone(f,t,60,.12,'sawtooth',.05,.005,-14,2000)},
+ magic(){tone(f,t,67,.3,'sine',.13,.01,17);tone(f,t+.04,79,.28,'triangle',.05,.01,12)},
+ block(){tone(f,t,84,.09,'square',.05);tone(f,t+.035,91,.14,'square',.04)},
+ hit(){noise(f,t,.09,.25,900,'lowpass');tone(f,t,45,.13,'sine',.25,.003,-8)},
+ hurt(){tone(f,t,43,.3,'sawtooth',.13,.004,-10,900);noise(f,t,.15,.18,700,'lowpass')},
+ heal(){[72,76,79,84].forEach((m,i)=>tone(f,t+i*.06,m,.18,'sine',.09))},
+ mana(){[79,86].forEach((m,i)=>tone(f,t+i*.07,m,.2,'sine',.08))},
+ coin(){tone(f,t,88,.07,'square',.05);tone(f,t+.07,95,.18,'square',.05)},
+ buff(){[60,64,67,72].forEach((m,i)=>tone(f,t+i*.05,m,.14,'square',.04,.005,0,2500))},
+ debuff(){[67,63,60].forEach((m,i)=>tone(f,t+i*.07,m,.16,'triangle',.07))},
+ turn(){tone(f,t,72,.12,'triangle',.06);tone(f,t+.1,79,.18,'triangle',.06)},
+ click(){tone(f,t,76,.04,'triangle',.05)},
+ err(){tone(f,t,50,.12,'square',.05);tone(f,t+.1,47,.14,'square',.05)},
+ relic(){[84,88,91,96].forEach((m,i)=>tone(f,t+i*.06,m,.3,'sine',.07))},
+ win(){[67,72,76,79].forEach((m,i)=>tone(f,t+i*.08,m,.25,'square',.05,.005,0,3000))},
+ roar(){noise(f,t,.8,.3,400,'lowpass');tone(f,t,40,.8,'sawtooth',.12,.05,-5,500)}})[n]?.()}
+document.addEventListener('pointerdown',()=>{auInit();if(AU.ctx&&AU.ctx.state==='suspended')AU.ctx.resume()},{passive:true});
+document.addEventListener('visibilitychange',()=>{if(!AU.ctx)return;document.hidden?AU.ctx.suspend():AU.ctx.resume()});
+function setOpt(k){OPT[k]=!OPT[k];ls.set(OKEY,OPT);if(AU.ctx){AU.mus.gain.value=OPT.music?.33:0;AU.fx.gain.value=OPT.sfx?.55:0}}
 
-/* ---------- 적 ---------- */
+/* ================= 용사 ================= */
+const H={
+knight:{n:'성기사 에단',sub:'방패와 반격',hp:86,maxM:2,regen:1,drawN:5,tags:['체력 86','마나 2','손패 5'],p:'전투를 방어도 10으로 시작해요. 방어도를 쌓아 버티다가 방패 강타로 되갚아 줍니다.',deck:{slash:4,guard:4,bash:1,prayer:1}},
+mage:{n:'대마법사 리아',sub:'강력한 주문',hp:66,maxM:4,regen:2,drawN:5,tags:['체력 66','마나 4','손패 5'],p:'마나가 많고 매 턴 2씩 차올라요. 몸은 약하지만 주문 한 방이 큽니다.',deck:{staff:3,fire:2,guard:3,ward:1,med:1}},
+rogue:{n:'그림자 도적 카이',sub:'출혈과 연속 공격',hp:60,maxM:0,regen:0,drawN:6,tags:['체력 60','마나 없음','손패 6'],p:'매 턴 카드를 6장 뽑고, 출혈을 걸 때마다 1씩 더 겁니다. 출혈을 쌓아 한 번에 터뜨리세요.',deck:{stab:4,guard:4,dodge:1,thorn:1}}
+};
+const HK=['knight','mage','rogue'];
+
+/* ================= 카드 ================= */
+const TL={atk:'근접',mag:'마법',def:'방어',skl:'기술'};
+const C={
+slash:{n:'베기',t:'atk',e:1,r:'b',h:'all',v:[6,9],d:v=>`피해 ${v}`,f:v=>hit(v)},
+guard:{n:'방패 들기',t:'def',e:1,r:'b',h:'all',v:[5,8],d:v=>`방어도 ${v}`,f:v=>blk(v)},
+dodge:{n:'재빠른 막기',t:'def',e:0,r:'c',h:'all',v:[4,7],d:v=>`방어도 ${v}`,f:v=>blk(v)},
+whirl:{n:'회전 베기',t:'atk',e:1,r:'c',h:'all',v:[4,5],d:v=>`피해 ${v} × 3`,f:v=>hit(v,3)},
+cleave:{n:'휩쓸기',t:'atk',e:1,r:'c',h:'all',v:[7,10],d:v=>`적 전체에게 피해 ${v}`,f:v=>hitAll(v)},
+insp:{n:'영감',t:'skl',e:0,r:'c',h:'all',v:[2,3],d:v=>`카드 ${v}장 뽑기`,f:v=>draw(v)},
+bomb:{n:'폭발 물약',t:'skl',e:1,x:1,r:'u',h:'all',v:[12,16],d:v=>`적 전체에게 피해 ${v}. 소멸`,f:v=>hitAll(v)},
+potion:{n:'회복 물약',t:'skl',e:0,x:1,r:'u',h:'all',v:[6,9],d:v=>`체력 ${v} 회복. 소멸`,f:v=>heal(v)},
+curse:{n:'저주',t:'skl',e:1,r:'u',h:'all',v:[2,3],d:v=>`취약 ${v}, 약화 ${v-1}`,f:v=>{const t=tg();if(t){st(t,'vul',v);st(t,'weak',v-1);sfx('debuff')}}},
+pouch:{n:'황금 주머니',t:'skl',e:0,x:1,r:'u',h:'all',v:[15,25],d:v=>`금화 ${v}, 카드 1장 뽑기. 소멸`,f:v=>{S.gold+=v;sfx('coin');draw(1)}},
+frost:{n:'서리 장벽',t:'def',e:2,r:'u',h:'all',v:[13,18],d:v=>`방어도 ${v}, 적 전체 약화 1`,f:v=>{blk(v);alive().forEach(e=>st(e,'weak',1))}},
+rage:{n:'전투의 함성',t:'skl',e:1,x:1,r:'r',h:'all',v:[2,3],d:v=>`힘 +${v}. 소멸`,f:v=>{st(B.p,'str',v);sfx('buff')}},
+bash:{n:'방패 강타',t:'atk',e:1,r:'c',h:'knight',v:[0,4],d:v=>`현재 방어도만큼 피해${v?' +'+v:''}`,f:v=>hit(B.p.block+v)},
+prayer:{n:'기도',t:'skl',e:1,r:'c',h:'knight',v:[6,9],d:v=>`방어도 ${v}, 체력 3 회복`,f:v=>{blk(v);heal(3)}},
+smite:{n:'신성한 일격',t:'mag',e:1,a:1,r:'c',h:'knight',v:[9,12],d:v=>`피해 ${v}, 약화 1`,f:v=>{hit(v);const t=tg();if(t)st(t,'weak',1)}},
+iron:{n:'철벽',t:'def',e:2,r:'u',h:'knight',v:[16,22],d:v=>`방어도 ${v}`,f:v=>blk(v)},
+riposte:{n:'반격 태세',t:'skl',e:1,r:'u',h:'knight',v:[3,5],d:v=>`가시 +${v} (맞을 때마다 되돌려줌)`,f:v=>{st(B.p,'thorns',v);sfx('buff')}},
+hold:{n:'굳건함',t:'skl',e:[1,0],r:'u',h:'knight',v:[0,0],d:()=>`다음 턴까지 방어도 유지`,f:()=>{st(B.p,'keep',1);sfx('buff')}},
+charge:{n:'성검 돌격',t:'mag',e:2,a:1,r:'u',h:'knight',v:[15,20],d:v=>`피해 ${v}, 방어도 ${v>15?10:8}`,f:v=>{hit(v);blk(v>15?10:8)}},
+judge:{n:'심판',t:'atk',e:2,r:'r',h:'knight',v:[20,26],d:v=>`피해 ${v}. 처치하면 최대 체력 +3`,f:v=>{const t=tg();hit(v);if(t&&t.hp<=0){B.p.max+=3;B.p.hp+=3;fx('pl','최대 체력 +3','g')}}},
+vow:{n:'성스러운 맹세',t:'skl',e:1,x:1,r:'r',h:'knight',v:[4,6],d:v=>`매 턴 시작 시 방어도 ${v}. 소멸`,f:v=>{st(B.p,'plate',v);sfx('buff')}},
+staff:{n:'지팡이 치기',t:'atk',e:1,r:'c',h:'mage',v:[6,9],d:v=>`피해 ${v}, 마나 +1`,f:v=>{hit(v);addMana(1)}},
+fire:{n:'화염구',t:'mag',e:1,a:1,r:'c',h:'mage',v:[12,16],d:v=>`피해 ${v}`,f:v=>hit(v)},
+med:{n:'명상',t:'skl',e:0,r:'c',h:'mage',v:[2,3],d:v=>`마나 +${v}`,f:v=>{addMana(v);sfx('mana')}},
+ward:{n:'마력 방벽',t:'def',e:1,r:'c',h:'mage',v:[6,9],d:v=>`방어도 ${v}, 마나 +1`,f:v=>{blk(v);addMana(1)}},
+ice:{n:'얼음창',t:'mag',e:1,a:1,r:'c',h:'mage',v:[8,11],d:v=>`피해 ${v}, 약화 2`,f:v=>{hit(v);const t=tg();if(t)st(t,'weak',2)}},
+chain:{n:'연쇄 번개',t:'mag',e:1,a:1,r:'u',h:'mage',v:[8,11],d:v=>`적 전체에게 피해 ${v}`,f:v=>hitAll(v)},
+ignite:{n:'점화',t:'mag',e:1,a:1,r:'u',h:'mage',v:[5,7],d:v=>`피해 3, 화상 ${v}`,f:v=>{const t=tg();hit(3);if(t&&t.hp>0)pst(t,'burn',v)}},
+tome:{n:'비전 지식',t:'skl',e:1,r:'u',h:'mage',v:[3,4],d:v=>`카드 ${v}장 뽑기`,f:v=>draw(v)},
+storm:{n:'불꽃 폭풍',t:'mag',e:1,xa:1,r:'r',h:'mage',v:[7,9],d:v=>`마나를 모두 써서, 1당 적 전체에게 피해 ${v}`,f:v=>{const m=B.mana;B.mana=0;for(let k=0;k<m;k++)hitAll(v)}},
+meteor:{n:'운석 낙하',t:'mag',e:2,a:2,r:'r',h:'mage',v:[30,40],d:v=>`피해 ${v}`,f:v=>hit(v)},
+warp:{n:'시간 왜곡',t:'skl',e:0,x:1,r:'r',h:'mage',v:[2,3],d:v=>`행동력 +${v}. 소멸`,f:v=>{B.energy+=v;sfx('buff')}},
+stab:{n:'찌르기',t:'atk',e:1,r:'c',h:'rogue',v:[4,6],d:v=>`피해 ${v}, 출혈 1`,f:v=>{const t=tg();hit(v);if(t&&t.hp>0)pst(t,'bleed',1)}},
+knife:{n:'단검 투척',t:'atk',e:0,r:'c',h:'rogue',v:[4,6],d:v=>`피해 ${v}`,f:v=>hit(v)},
+thorn:{n:'가시 단검',t:'atk',e:1,r:'c',h:'rogue',v:[7,9],d:v=>`피해 ${v}, 출혈 ${v>7?4:3}`,f:v=>{const t=tg();hit(v);if(t&&t.hp>0)pst(t,'bleed',v>7?4:3)}},
+shadow:{n:'그림자 걸음',t:'def',e:1,r:'c',h:'rogue',v:[7,10],d:v=>`방어도 ${v}, 카드 1장 뽑기`,f:v=>{blk(v);draw(1)}},
+prep:{n:'준비',t:'skl',e:0,r:'c',h:'rogue',v:[1,2],d:v=>`카드 ${v}장 뽑기, 출혈 중인 적이 있으면 1장 더`,f:v=>draw(v+(alive().some(e=>e.st.bleed>0)?1:0))},
+flurry:{n:'연속 찌르기',t:'atk',e:1,r:'u',h:'rogue',v:[3,4],d:v=>`피해 ${v} × 4`,f:v=>hit(v,4)},
+fog:{n:'독 안개',t:'skl',e:1,r:'u',h:'rogue',v:[4,6],d:v=>`적 전체 출혈 ${v}`,f:v=>{alive().forEach(e=>pst(e,'bleed',v));sfx('debuff')}},
+feast:{n:'피의 축제',t:'skl',e:[1,0],r:'u',h:'rogue',v:[0,0],d:()=>`대상의 출혈을 2배로`,f:()=>{const t=tg();if(t&&t.st.bleed){t.st.bleed*=2;fx(t.id,'출혈 ×2','r');sfx('debuff')}}},
+finish:{n:'마무리 일격',t:'atk',e:2,r:'u',h:'rogue',v:[12,16],d:v=>`피해 ${v}. 대상이 출혈 중이면 2배`,f:v=>{const t=tg();hit(t&&t.st.bleed>0?v*2:v)}},
+execu:{n:'그림자 처형',t:'atk',e:1,r:'r',h:'rogue',v:[3,4],d:v=>`대상의 출혈 1당 피해 ${v}`,f:v=>{const t=tg();hit(t?(t.st.bleed||0)*v:0)}},
+venom:{n:'맹독술',t:'skl',e:1,x:1,r:'r',h:'rogue',v:[2,3],d:v=>`이번 전투 동안 출혈을 걸 때 +${v}. 소멸`,f:v=>{st(B.p,'venom',v);sfx('buff')}},
+};
+const cost=c=>{const e=C[c.id].e;return Array.isArray(e)?e[c.up?1:0]:e};
+
+/* ================= 유물 ================= */
+const RL={
+amulet:{n:'낡은 부적',d:'최대 체력 +10',c:'#b8892a',pick(){S.max+=10;S.hp+=10}},
+phoenix:{n:'불사조 깃털',d:'쓰러지면 한 번, 체력 30%로 되살아나요',c:'#e8622c'},
+crystal:{n:'마나 수정',d:'최대 마나 +1',c:'#1fa69a',no:'rogue'},
+whet:{n:'날카로운 숫돌',d:'근접 카드 피해 +2',c:'#7d8a90'},
+mark:{n:'룬 책갈피',d:'마법 카드 피해 +3',c:'#4a6bd0',no:'rogue'},
+shell:{n:'거북 등껍질',d:'매 턴 시작 시 방어도 3',c:'#3f7a4a'},
+grail:{n:'피의 성배',d:'전투에서 이기면 체력 6 회복',c:'#a3161e'},
+lucky:{n:'행운의 동전',d:'전투에서 얻는 금화 +50%',c:'#c99a1a'},
+glass:{n:'모래시계',d:'전투 첫 턴에 카드 2장 더 뽑기',c:'#a8845a'},
+spike:{n:'가시 갑옷',d:'전투 시작 시 가시 3',c:'#5d6b52'},
+scale:{n:'용의 비늘',d:'전투 시작 시 힘 +1',c:'#b8291f'},
+fang:{n:'독사의 송곳니',d:'출혈·화상을 걸 때 +1',c:'#5a8a30'},
+core:{n:'불안정한 핵',d:'행동력 +1, 대신 매 턴 뽑는 카드 -1',c:'#7a3fa0'}
+};
+const has=k=>!!(S&&S.relics.includes(k));
+function rollRelic(){const pool=Object.keys(RL).filter(k=>!S.relics.includes(k)&&RL[k].no!==S.hero);return pool.length?pick(pool):null}
+function gainRelic(k){S.relics.push(k);if(RL[k].pick)RL[k].pick();sfx('relic')}
+
+/* ================= 적 ================= */
 const E={
-slime:{n:'끈적 슬라임',hp:[15,19],ai:[{d:5},{d:3,c:2},{d:4,bleed:2}]},
-bat:{n:'흡혈 박쥐',hp:[12,15],ai:[{d:4,vul:1},{d:6},{weak:1,b:4}]},
-goblin:{n:'고블린 도적',hp:[24,28],ai:[{d:8},{d:5,b:6},{d:6,weak:1}]},
+slime:{n:'끈적 슬라임',hp:[15,19],ai:[{d:5},{d:3,c:2},{d:4,weak:1}]},
+bat:{n:'흡혈 박쥐',hp:[12,15],ai:[{d:4,vul:1},{d:6},{d:3,h:3}]},
+goblin:{n:'고블린 도적',hp:[22,26],ai:[{d:8},{d:5,b:6},{d:5,g:12}]},
+archer:{n:'해골 궁수',hp:[18,22],ai:[{d:4,c:2},{d:9},{d:3,vul:2}]},
+mush:{n:'버섯 주술사',hp:[20,24],ai:[{d:4,weak:1},{h:6,b:4},{d:7}]},
 wolf:{n:'그림자 늑대',hp:[28,32],ai:[{d:11},{d:6,bleed:3},{b:8,s:2}]},
 ogre:{n:'동굴 오우거',hp:[54,58],ai:[{b:12,s:2},{d:14},{d:7,c:2,vul:1}]},
 dk:{n:'암흑 기사',hp:[46,50],ai:[{d:4,c:3},{d:11,weak:1},{b:10,s:2}]},
-dragon:{n:'고대의 붉은 용',hp:[150,150],seq:1,ai:[{b:14,s:3},{d:6,c:3},{d:8,vul:2,weak:2},{d:20}]}
+golem:{n:'돌 골렘',hp:[68,74],ai:[{b:16},{d:17},{d:8,c:2}]},
+dragon:{n:'고대의 붉은 용',hp:[165,165],seq:1,ai:[{b:14,s:2},{d:6,c:3},{d:8,burn:4,vul:1},{d:12,weak:2},{d:22}]}
 };
 
-/* ---------- 그림 ---------- */
+/* ================= 그림 ================= */
 const sh='<ellipse cx="50" cy="94" rx="30" ry="5" fill="#000" opacity=".35"/>';
 const SP={
-pl:`<svg viewBox="0 0 100 100">${sh}<path d="M30 52Q22 76 26 92h48q4-16-4-40z" fill="#2f5fb5"/><rect x="38" y="82" width="9" height="12" rx="2" fill="#3a3f47"/><rect x="53" y="82" width="9" height="12" rx="2" fill="#3a3f47"/><rect x="34" y="50" width="32" height="36" rx="9" fill="#c9d2d8"/><path d="M34 62h32" stroke="#8d9aa3" stroke-width="3"/><rect x="34" y="70" width="32" height="5" fill="#5a3a26"/><rect x="47" y="69" width="7" height="7" rx="1" fill="#f0c04a"/><path d="M70 66 90 30" stroke="#e9eef1" stroke-width="5" stroke-linecap="round"/><path d="M64 66h12" stroke="#f0c04a" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="37" r="13" fill="#f0c19c"/><path d="M36 36q0-18 14-18t14 18q-4-8-14-8t-14 8z" fill="#7a4a24"/><circle cx="45" cy="38" r="2" fill="#24151b"/><circle cx="55" cy="38" r="2" fill="#24151b"/><path d="M46 45q4 3 8 0" stroke="#a0502e" stroke-width="1.8" fill="none"/><path d="M34 26q16-16 32 0" stroke="#c9d2d8" stroke-width="5" fill="none"/><path d="M50 12q8-4 12 2-6-1-10 6z" fill="#e5452f"/></svg>`,
+knight:`<svg viewBox="0 0 100 100">${sh}<path d="M30 52Q22 76 26 92h48q4-16-4-40z" fill="#2f5fb5"/><rect x="38" y="82" width="9" height="12" rx="2" fill="#3a3f47"/><rect x="53" y="82" width="9" height="12" rx="2" fill="#3a3f47"/><rect x="34" y="50" width="32" height="36" rx="9" fill="#c9d2d8"/><path d="M34 62h32" stroke="#8d9aa3" stroke-width="3"/><rect x="34" y="70" width="32" height="5" fill="#5a3a26"/><rect x="47" y="69" width="7" height="7" rx="1" fill="#f0c04a"/><path d="M70 66 90 30" stroke="#e9eef1" stroke-width="5" stroke-linecap="round"/><path d="M64 66h12" stroke="#f0c04a" stroke-width="4" stroke-linecap="round"/><path d="M14 56h20v14q0 12-10 16-10-4-10-16z" fill="#2f5fb5" stroke="#f0c04a" stroke-width="2.5"/><path d="M24 60v20M17 68h14" stroke="#f5ecd9" stroke-width="3"/><circle cx="50" cy="37" r="13" fill="#f0c19c"/><path d="M36 36q0-18 14-18t14 18q-4-8-14-8t-14 8z" fill="#7a4a24"/><circle cx="45" cy="38" r="2" fill="#24151b"/><circle cx="55" cy="38" r="2" fill="#24151b"/><path d="M46 45q4 3 8 0" stroke="#a0502e" stroke-width="1.8" fill="none"/><path d="M34 26q16-16 32 0" stroke="#c9d2d8" stroke-width="5" fill="none"/><path d="M50 12q8-4 12 2-6-1-10 6z" fill="#e5452f"/></svg>`,
+mage:`<svg viewBox="0 0 100 100">${sh}<path d="M78 92V30" stroke="#7a5530" stroke-width="4" stroke-linecap="round"/><circle cx="78" cy="25" r="14" fill="#3fd1c4" opacity=".22"/><circle cx="78" cy="25" r="7" fill="#7ff0e4"/><path d="M28 92 38 50h24l10 42z" fill="#3a4fb0"/><path d="M38 50h24l2 10H36z" fill="#2c3a8c"/><path d="M33 74h34" stroke="#f0c04a" stroke-width="3"/><path d="M62 60 76 50" stroke="#3a4fb0" stroke-width="7" stroke-linecap="round"/><path d="M36 40q-6 22 2 32h24q8-10 2-32z" fill="#e07a3a"/><circle cx="50" cy="41" r="12" fill="#f3c9a6"/><circle cx="46" cy="42" r="1.8" fill="#24151b"/><circle cx="54" cy="42" r="1.8" fill="#24151b"/><path d="M47 47q3 2 6 0" stroke="#a0502e" stroke-width="1.5" fill="none"/><path d="M24 34h52l-6-5H30z" fill="#2c3a8c"/><path d="M33 31 56 2l10 29z" fill="#3a4fb0"/><path d="M35 27h29" stroke="#f0c04a" stroke-width="3"/><circle cx="54" cy="15" r="2.2" fill="#f0c04a"/><circle cx="47" cy="21" r="1.5" fill="#f0c04a"/></svg>`,
+rogue:`<svg viewBox="0 0 100 100">${sh}<rect x="38" y="82" width="8" height="12" rx="2" fill="#2a2a30"/><rect x="54" y="82" width="8" height="12" rx="2" fill="#2a2a30"/><path d="M28 92Q26 56 50 46q24 10 22 46z" fill="#2f4a3a"/><path d="M38 56h24v30H38z" fill="#3d3d48"/><path d="M38 70h24" stroke="#7a5530" stroke-width="3"/><path d="M42 56l8 10 8-10" stroke="#24151b" stroke-width="2" fill="none"/><path d="M22 74 8 58" stroke="#dfe6ea" stroke-width="4" stroke-linecap="round"/><path d="M78 74 92 58" stroke="#dfe6ea" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="76" r="4" fill="#7a5530"/><circle cx="76" cy="76" r="4" fill="#7a5530"/><path d="M31 46Q30 16 50 14q20 2 19 32-8 8-19 8t-19-8z" fill="#2f4a3a"/><ellipse cx="50" cy="40" rx="11" ry="10" fill="#e8b48c"/><rect x="39" y="41" width="22" height="9" rx="3" fill="#1c2420"/><path d="M43 37h5M52 37h5" stroke="#24151b" stroke-width="2.6" stroke-linecap="round"/><path d="M36 28q14-8 28 0" stroke="#24382c" stroke-width="3" fill="none"/></svg>`,
 slime:`<svg viewBox="0 0 100 100">${sh}<path d="M16 90Q12 56 50 38Q88 56 84 90z" fill="#5fcf6a"/><path d="M16 90Q14 70 30 58Q24 76 30 90z" fill="#47a953"/><ellipse cx="36" cy="54" rx="8" ry="5" fill="#c9f7cd" opacity=".8"/><circle cx="40" cy="68" r="6" fill="#fff"/><circle cx="60" cy="68" r="6" fill="#fff"/><circle cx="41" cy="69" r="3" fill="#1d2a1d"/><circle cx="61" cy="69" r="3" fill="#1d2a1d"/><path d="M42 80q8 6 16 0" stroke="#1d2a1d" stroke-width="2.5" fill="none"/><circle cx="72" cy="48" r="4" fill="#5fcf6a"/></svg>`,
 bat:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="94" rx="20" ry="4" fill="#000" opacity=".3"/><path d="M42 50Q22 30 4 40q8 4 8 12 8-6 12 2 6-6 12 4z" fill="#3b2a4a"/><path d="M58 50Q78 30 96 40q-8 4-8 12-8-6-12 2-6-6-12 4z" fill="#3b2a4a"/><ellipse cx="50" cy="54" rx="15" ry="18" fill="#4d3760"/><path d="M38 40l2-12 6 10M62 40l-2-12-6 10" fill="#4d3760"/><circle cx="44" cy="50" r="3.5" fill="#ff3b3b"/><circle cx="56" cy="50" r="3.5" fill="#ff3b3b"/><path d="M45 60l2 5 2-5M51 60l2 5 2-5" fill="#fff"/></svg>`,
-goblin:`<svg viewBox="0 0 100 100">${sh}<rect x="38" y="82" width="8" height="12" fill="#4a3320"/><rect x="54" y="82" width="8" height="12" fill="#4a3320"/><path d="M34 52h32l4 34H30z" fill="#7a5530"/><path d="M34 60h32" stroke="#4a3320" stroke-width="3"/><path d="M70 66 86 52" stroke="#cfd6da" stroke-width="4" stroke-linecap="round"/><circle cx="68" cy="67" r="4" fill="#6fa040"/><path d="M30 34 10 26l20 16z" fill="#6fa040"/><path d="M70 34 90 26 70 42z" fill="#6fa040"/><circle cx="50" cy="38" r="17" fill="#7fb24a"/><path d="M33 32q17-14 34 0" fill="#3a2a1a"/><circle cx="43" cy="38" r="4" fill="#ffe066"/><circle cx="57" cy="38" r="4" fill="#ffe066"/><circle cx="43" cy="38" r="1.6" fill="#111"/><circle cx="57" cy="38" r="1.6" fill="#111"/><path d="M42 48q8 4 16 0" stroke="#2a3a12" stroke-width="2" fill="none"/><path d="M45 48l2 4 2-4" fill="#fff"/></svg>`,
+goblin:`<svg viewBox="0 0 100 100">${sh}<rect x="38" y="82" width="8" height="12" fill="#4a3320"/><rect x="54" y="82" width="8" height="12" fill="#4a3320"/><path d="M34 52h32l4 34H30z" fill="#7a5530"/><path d="M34 60h32" stroke="#4a3320" stroke-width="3"/><circle cx="30" cy="74" r="8" fill="#c99a1a"/><path d="M27 72h6" stroke="#7a5a00" stroke-width="2"/><path d="M70 66 86 52" stroke="#cfd6da" stroke-width="4" stroke-linecap="round"/><circle cx="68" cy="67" r="4" fill="#6fa040"/><path d="M30 34 10 26l20 16z" fill="#6fa040"/><path d="M70 34 90 26 70 42z" fill="#6fa040"/><circle cx="50" cy="38" r="17" fill="#7fb24a"/><path d="M33 32q17-14 34 0" fill="#3a2a1a"/><circle cx="43" cy="38" r="4" fill="#ffe066"/><circle cx="57" cy="38" r="4" fill="#ffe066"/><circle cx="43" cy="38" r="1.6" fill="#111"/><circle cx="57" cy="38" r="1.6" fill="#111"/><path d="M42 48q8 4 16 0" stroke="#2a3a12" stroke-width="2" fill="none"/><path d="M45 48l2 4 2-4" fill="#fff"/></svg>`,
+archer:`<svg viewBox="0 0 100 100">${sh}<path d="M48 50v34" stroke="#e3dccd" stroke-width="5"/><path d="M36 56h28M38 64h24M40 72h20" stroke="#e3dccd" stroke-width="4" stroke-linecap="round"/><path d="M42 86l-4 8M54 86l4 8" stroke="#e3dccd" stroke-width="4"/><path d="M36 56 24 60M64 56l12 0" stroke="#e3dccd" stroke-width="4" stroke-linecap="round"/><path d="M22 30Q6 60 22 90" stroke="#7a5530" stroke-width="4" fill="none"/><path d="M22 30v60" stroke="#ddd" stroke-width="1.2"/><path d="M22 60h-0M24 60h56" stroke="#cfd6da" stroke-width="2.5"/><path d="M80 56l6 4-6 4z" fill="#cfd6da"/><circle cx="50" cy="32" r="15" fill="#f1ebdd"/><rect x="42" y="40" width="16" height="9" rx="3" fill="#f1ebdd"/><path d="M45 42v6M50 42v6M55 42v6" stroke="#8b8270" stroke-width="1.5"/><circle cx="44" cy="31" r="4.5" fill="#1c1c1c"/><circle cx="56" cy="31" r="4.5" fill="#1c1c1c"/><circle cx="56" cy="31" r="1.5" fill="#ff5a3c"/><path d="M33 30Q50 4 67 30q-17-8-34 0z" fill="#3a2a3a"/></svg>`,
+mush:`<svg viewBox="0 0 100 100">${sh}<path d="M36 92q-2-30 14-34 16 4 14 34z" fill="#efe2c6"/><circle cx="44" cy="74" r="3" fill="#24151b"/><circle cx="56" cy="74" r="3" fill="#24151b"/><path d="M46 82q4 3 8 0" stroke="#24151b" stroke-width="2" fill="none"/><path d="M12 60Q14 20 50 18q36 2 38 42z" fill="#8f3fa8"/><path d="M12 60q38 8 76 0" stroke="#6b2a80" stroke-width="4" fill="none"/><circle cx="30" cy="44" r="6" fill="#f5ecd9"/><circle cx="54" cy="30" r="5" fill="#f5ecd9"/><circle cx="72" cy="46" r="7" fill="#f5ecd9"/><circle cx="14" cy="30" r="2.5" fill="#b6f08a" opacity=".7"/><circle cx="86" cy="24" r="3" fill="#b6f08a" opacity=".7"/><circle cx="92" cy="70" r="2" fill="#b6f08a" opacity=".7"/></svg>`,
 wolf:`<svg viewBox="0 0 100 100">${sh}<path d="M16 62Q4 52 10 40q4 12 14 14z" fill="#3a3d48"/><ellipse cx="44" cy="66" rx="28" ry="17" fill="#4a4e5c"/><path d="M26 76v16M38 78v16M54 78v16M64 76v16" stroke="#3a3d48" stroke-width="6" stroke-linecap="round"/><path d="M60 56q8-22 24-18l10 10-6 8-14 2-8 8z" fill="#55596a"/><path d="M66 40l2-14 8 12M78 38l4-12 4 14" fill="#3a3d48"/><circle cx="78" cy="46" r="3" fill="#7ff0ff"/><path d="M84 56l3 4 3-4" fill="#fff"/><circle cx="93" cy="50" r="2.5" fill="#111"/></svg>`,
 ogre:`<svg viewBox="0 0 100 100">${sh}<rect x="32" y="80" width="13" height="14" rx="3" fill="#6b5a3a"/><rect x="55" y="80" width="13" height="14" rx="3" fill="#6b5a3a"/><ellipse cx="50" cy="62" rx="28" ry="24" fill="#a3a85e"/><path d="M26 66h48l-4 16H30z" fill="#7a4e2c"/><path d="M76 58 92 22" stroke="#7a5530" stroke-width="9" stroke-linecap="round"/><circle cx="92" cy="20" r="8" fill="#7a5530"/><circle cx="50" cy="32" r="16" fill="#b4b96a"/><circle cx="44" cy="30" r="3" fill="#111"/><circle cx="56" cy="30" r="3" fill="#111"/><path d="M40 24l8 3M60 24l-8 3" stroke="#3a3a1a" stroke-width="2.5"/><path d="M42 40h16" stroke="#3a3a1a" stroke-width="3"/><path d="M44 40l2-5 2 5M52 40l2-5 2 5" fill="#fff"/></svg>`,
 dk:`<svg viewBox="0 0 100 100">${sh}<path d="M28 50Q20 76 24 92h52q4-16-4-42z" fill="#8f1d22"/><rect x="37" y="82" width="10" height="12" fill="#1c1c22"/><rect x="53" y="82" width="10" height="12" fill="#1c1c22"/><rect x="32" y="48" width="36" height="38" rx="7" fill="#2b2b35"/><path d="M32 62h36M50 48v38" stroke="#44444f" stroke-width="3"/><path d="M74 70 86 14" stroke="#9aa3ab" stroke-width="7" stroke-linecap="round"/><path d="M66 70h16" stroke="#555" stroke-width="5" stroke-linecap="round"/><rect x="35" y="16" width="30" height="32" rx="10" fill="#33333e"/><path d="M39 30h22" stroke="#ff3a2a" stroke-width="4"/><path d="M35 22 26 8l12 8M65 22l9-14-12 8" fill="#33333e"/></svg>`,
+golem:`<svg viewBox="0 0 100 100">${sh}<rect x="34" y="82" width="12" height="12" rx="3" fill="#5d5f66"/><rect x="54" y="82" width="12" height="12" rx="3" fill="#5d5f66"/><rect x="8" y="46" width="18" height="34" rx="7" fill="#6b6d74"/><rect x="74" y="46" width="18" height="34" rx="7" fill="#6b6d74"/><rect x="22" y="42" width="56" height="44" rx="10" fill="#7d7f86"/><path d="M30 54l8 6-4 8M68 50l-6 8 6 6" stroke="#55575e" stroke-width="2.5" fill="none"/><circle cx="50" cy="64" r="7" fill="#3fd1c4" opacity=".8"/><ellipse cx="34" cy="46" rx="8" ry="3" fill="#5f8f4a"/><rect x="34" y="14" width="32" height="30" rx="8" fill="#8c8e95"/><rect x="40" y="26" width="8" height="5" fill="#3fd1c4"/><rect x="52" y="26" width="8" height="5" fill="#3fd1c4"/><path d="M40 37h20" stroke="#55575e" stroke-width="3"/></svg>`,
 dragon:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="95" rx="42" ry="5" fill="#000" opacity=".35"/><path d="M30 50Q4 20 2 40q10 0 12 10 8-6 12 4 4-4 10 4z" fill="#8f1f1a"/><path d="M70 50Q96 20 98 40q-10 0-12 10-8-6-12 4-4-4-10 4z" fill="#8f1f1a"/><path d="M78 84q18 2 16-14" stroke="#b8291f" stroke-width="7" fill="none" stroke-linecap="round"/><ellipse cx="50" cy="70" rx="26" ry="22" fill="#b8291f"/><path d="M40 56q10 30 20 0" fill="#f0c04a" opacity=".85"/><path d="M42 62h16M42 70h16M44 78h12" stroke="#c99a2a" stroke-width="2"/><path d="M30 88v6M70 88v6" stroke="#8f1f1a" stroke-width="8" stroke-linecap="round"/><ellipse cx="50" cy="34" rx="18" ry="15" fill="#c9332a"/><path d="M38 24 30 6l14 14M62 24l8-18-14 14" fill="#f5ecd9"/><circle cx="43" cy="32" r="4" fill="#ffe066"/><circle cx="57" cy="32" r="4" fill="#ffe066"/><path d="M43 29v6M57 29v6" stroke="#111" stroke-width="1.8"/><ellipse cx="50" cy="44" rx="10" ry="6" fill="#a8261e"/><circle cx="46" cy="43" r="1.5" fill="#3a0a08"/><circle cx="54" cy="43" r="1.5" fill="#3a0a08"/></svg>`
 };
 const ICO={
 sword:'<svg viewBox="0 0 24 24"><path d="M4 20 18 6M15 4h5v5" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></svg>',
 shield:'<svg viewBox="0 0 24 24"><path d="M12 2 4 5v7c0 5 4 8 8 10 4-2 8-5 8-10V5z" fill="currentColor"/></svg>',
+spark:'<svg viewBox="0 0 24 24"><path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5z" fill="currentColor"/></svg>',
+gear:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>',
+note:'<svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13" stroke="currentColor" stroke-width="2.4" fill="none"/><circle cx="6" cy="18" r="3" fill="currentColor"/><circle cx="17" cy="16" r="3" fill="currentColor"/></svg>',
 battle:'<svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4 4 20M3 17l4 4M21 17l-4 4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
 elite:'<svg viewBox="0 0 24 24"><path d="M5 3l3 5h8l3-5v8a7 7 0 0 1-14 0z" fill="currentColor"/><circle cx="9" cy="12" r="1.8" fill="#fff"/><circle cx="15" cy="12" r="1.8" fill="#fff"/></svg>',
 rest:'<svg viewBox="0 0 24 24"><path d="M12 2c4 5 6 8 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 1 2 2 3 3 3 0-3-1-5 0-8z" fill="#e2582c"/><path d="M4 21h16" stroke="#6b4428" stroke-width="3" stroke-linecap="round"/></svg>',
 shop:'<svg viewBox="0 0 24 24"><path d="M8 7a4 4 0 0 1 8 0" stroke="#6b4428" stroke-width="2" fill="none"/><path d="M5 7h14l-1 14H6z" fill="#b07a3c"/><circle cx="12" cy="14" r="3" fill="#f0c04a"/></svg>',
 treasure:'<svg viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="11" rx="2" fill="#8a5a2c"/><path d="M3 11a9 6 0 0 1 18 0z" fill="#a8703a"/><rect x="10" y="11" width="4" height="5" fill="#f0c04a"/></svg>',
+event:'<svg viewBox="0 0 24 24"><path d="M8 8a4 4 0 1 1 6 3.5c-1.5 1-2 1.8-2 3.5" stroke="#5a3a8a" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="12" cy="20" r="1.8" fill="#5a3a8a"/></svg>',
 boss:'<svg viewBox="0 0 24 24"><path d="M3 18 2 7l5 4 5-7 5 7 5-4-1 11z" fill="currentColor"/></svg>'
 };
+const TYI={atk:ICO.sword,mag:ICO.spark,def:ICO.shield,skl:ICO.gear};
+const NL={battle:'전투',elite:'정예',rest:'휴식',shop:'상점',treasure:'보물',event:'사건',boss:'용'};
 
-/* ---------- 원정 ---------- */
-function genMap(){const m=[['battle','battle']];for(let r=1;r<=10;r++){const n=R(2,3),row=[];for(let i=0;i<n;i++){const x=Math.random();row.push(x<.5?'battle':x<.64?(r>=3?'elite':'battle'):x<.79?'rest':x<.9?'shop':'treasure')}if(r===5)row[0]='treasure';if(r===8&&!row.includes('elite'))row[R(0,n-1)]='elite';m.push(row)}m.push(['rest','shop'],['boss']);return m}
+/* ================= 지도 (갈림길) ================= */
+const ROWS=12;
+function genMap(){const COLS=4,cells=[...Array(ROWS)].map(()=>new Set()),edges=new Set();
+ for(let p=0;p<4;p++){let c=p===0?R(0,1):p===1?R(2,3):R(0,3);
+  for(let r=0;r<ROWS;r++){cells[r].add(c);if(r===ROWS-1)break;
+   const nc=shuf([c-1,c,c+1].filter(x=>x>=0&&x<COLS)).find(x=>x===c||!edges.has(`${r}:${x}>${c}`));edges.add(`${r}:${c}>${nc}`);c=nc}}
+ const map=cells.map(s=>[...s].sort((a,b)=>a-b).map(c=>({c,n:[],j:R(-4,4),t:'battle'})));
+ edges.forEach(e=>{const[r,rest]=e.split(':'),[a,b]=rest.split('>').map(Number),row=+r;const from=map[row].find(x=>x.c===a),ti=map[row+1].findIndex(x=>x.c===b);if(!from.n.includes(ti))from.n.push(ti)});
+ map[ROWS-1].forEach(x=>x.n=[0]);
+ map.forEach((row,r)=>row.forEach(x=>{if(r===0)x.t='battle';else if(r===5)x.t='treasure';else if(r===ROWS-1)x.t='rest';else{const q=Math.random();x.t=r>=4&&q<.13?'elite':q<.48?'battle':q<.68?'event':r>=2&&q<.8?'shop':r>=3&&r!==ROWS-2&&q<.92?'rest':'battle'}}));
+ map.push([{c:1.5,n:[],j:0,t:'boss'}]);return map}
+const canGo=i=>S.floor===0||S.map[S.floor-1][S.pos].n.includes(i);
+
+/* ================= 원정 ================= */
 const card=(id,up=false)=>({id,up});
-function newRun(){S={hp:70,max:70,gold:99,floor:0,path:[],map:genMap(),scr:'map',modal:null,deck:[...Array(4)].map(()=>card('slash')).concat([card('fire'),card('fire'),card('guard'),card('guard'),card('guard'),card('med')])};save();render()}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.deck)return s}catch(e){}return null}
-function clear(){try{localStorage.removeItem(KEY)}catch(e){}}
-function proceed(){S.floor++;S.scr='map';S.modal=null;save();render()}
+function newRun(h){const hd=H[h],deck=[];for(const k in hd.deck)for(let i=0;i<hd.deck[k];i++)deck.push(card(k));
+ S={hero:h,hp:hd.hp,max:hd.hp,gold:99,floor:0,pos:-1,path:[],map:genMap(),scr:'map',deck,relics:[],seen:[],turns:0};save();render()}
+const save=()=>{if(S&&S.scr!=='battle')ls.set(KEY,S)};
+const load=()=>{const s=ls.get(KEY,null);return s&&s.deck&&s.hero?s:null};
+function proceed(){S.floor++;S.scr='map';MOD=null;S.rw=null;S.ev=null;S.shop=null;save();render()}
+function stat(win){const st=ls.get(SKEY,{win:{},best:{}}),h=S.hero;st.best[h]=Math.max(st.best[h]||0,Math.min(S.floor+1,13));if(win)st.win[h]=(st.win[h]||0)+1;ls.set(SKEY,st)}
+const W={norm:{c:.6,u:.33,r:.07},elite:{c:.35,u:.45,r:.2},shop:{c:.5,u:.38,r:.12},rare:{c:0,u:.35,r:.65}};
+function rollCards(n,mode,upAll){const pool=Object.keys(C).filter(k=>C[k].r!=='b'&&(C[k].h==='all'||C[k].h===S.hero)),w=W[mode],out=[];
+ for(let i=0;i<n;i++){const q=Math.random(),rar=q<w.c?'c':q<w.c+w.u?'u':'r';let cand=pool.filter(k=>C[k].r===rar&&!out.includes(k));if(!cand.length)cand=pool.filter(k=>!out.includes(k));out.push(pick(cand))}
+ return out.map(k=>card(k,upAll||Math.random()<.1))}
+const price=c=>({c:R(45,55),u:R(70,85),r:R(130,150)})[C[c.id].r]+(c.up?25:0);
 
-/* ---------- 전투 ---------- */
+/* ================= 사건 ================= */
+const EV=[
+{t:'수상한 샘물',d:'푸르스름하게 빛나는 샘물이 고여 있다. 마셔 볼까?',o:[
+ {l:'마신다',f(){if(Math.random()<.5){S.hp=Math.min(S.max,S.hp+15);sfx('heal');return '몸이 가벼워졌다. 체력 15 회복!'}S.hp=Math.max(1,S.hp-8);S.max+=6;S.hp+=6;sfx('debuff');return '쓰디쓴 맛… 체력 8을 잃었지만 최대 체력이 6 늘었다.'}},
+ {l:'지나간다',f:()=>'수상한 건 피하는 게 상책이다.'}]},
+{t:'떠돌이 대장장이',d:'"자네 장비, 공짜로 손봐 주지."',o:[
+ {l:'카드 1장 강화',need:()=>S.deck.some(c=>!c.up),f(){MOD={m:'upgrade',ctx:'event'};return null}},
+ {l:'사양한다',f:()=>'대장장이가 어깨를 으쓱한다.'}]},
+{t:'고블린 도박꾼',d:'"금화 30개 걸고 동전 던지기 한 판 어때?"',o:[
+ {l:'건다 (금화 30)',need:()=>S.gold>=30,f(){S.gold-=30;if(Math.random()<.5){S.gold+=75;sfx('coin');return '이겼다! 금화 75를 받았다.'}sfx('err');return '졌다… 고블린이 낄낄댄다.'}},
+ {l:'무시한다',f:()=>'고블린이 혀를 찬다.'}]},
+{t:'피의 제단',d:'제단에 피를 바치면 보물을 내어 준다고 한다.',o:[
+ {l:'체력 12를 바친다',need:()=>S.hp>12,f(){S.hp-=12;const r=rollRelic();if(r){gainRelic(r);return `유물 「${RL[r].n}」을 얻었다! ${RL[r].d}.`}S.gold+=60;return '금화 60을 얻었다.'}},
+ {l:'떠난다',f:()=>'불길한 기운을 뒤로한다.'}]},
+{t:'잊혀진 서고',d:'먼지 쌓인 책장에 낡은 비법서들이 꽂혀 있다.',o:[
+ {l:'비법서를 읽는다',f(){S.rw={kind:'lib',gold:0,cards:rollCards(3,'rare'),title:'비법서의 지혜'};S.scr='reward';return null}},
+ {l:'낡은 기술을 잊는다 (카드 1장 제거)',need:()=>S.deck.length>5,f(){MOD={m:'remove',ctx:'event'};return null}}]},
+{t:'길 잃은 아이',d:'배고파 보이는 아이가 길가에 앉아 있다.',o:[
+ {l:'금화 20을 준다',need:()=>S.gold>=20,f(){S.gold-=20;S.max+=5;S.hp+=5;sfx('heal');return '아이가 웃으며 작은 부적을 쥐여 준다. 최대 체력 +5.'}},
+ {l:'지나간다',f:()=>'마음 한구석이 무겁다.'}]},
+{t:'움찔거리는 상자',d:'혼자 놓인 상자가 살짝 움찔거린다…',o:[
+ {l:'연다',f(){if(Math.random()<.55){const g=R(50,90);S.gold+=g;sfx('coin');return `금화 ${g}개가 쏟아졌다!`}S.hp=Math.max(1,S.hp-10);sfx('hurt');return '미믹이었다! 물려서 체력 10을 잃었다.'}},
+ {l:'건드리지 않는다',f:()=>'현명한 선택일지도.'}]},
+{t:'잠든 용사의 유령',d:'반투명한 기사가 검을 내밀며 결투를 청한다.',o:[
+ {l:'결투한다 (체력 -7)',need:()=>S.hp>7,f(){S.hp-=7;const c=rollCards(1,'rare',true)[0];S.deck.push(c);sfx('relic');return `유령이 미소 지으며 사라졌다. 「${C[c.id].n}+」 카드를 얻었다.`}},
+ {l:'정중히 거절한다',f:()=>'유령이 고개를 끄덕이고 사라졌다.'}]}
+];
+
+/* ================= 전투 ================= */
 const alive=()=>B.en.filter(e=>e.hp>0);
 function tg(){let t=B.en[B.tgt];if(!t||t.hp<=0){t=alive()[0];if(t)B.tgt=B.en.indexOf(t)}return t}
 function calc(src,dst,v){v+=src.st.str||0;if(src.st.weak)v=Math.floor(v*.75);if(dst.st.vul)v=Math.floor(v*1.5);return Math.max(0,v)}
-function dmg(dst,v){const b=Math.min(dst.block,v);dst.block-=b;v-=b;dst.hp=Math.max(0,dst.hp-v);fx(dst.id,v?'-'+v:'막음',v?'r':'b')}
-function hit(v,n=1){for(let k=0;k<n;k++){const t=tg();if(!t)return;dmg(t,calc(B.p,t,v))}}
-function hitAll(v){alive().forEach(e=>dmg(e,calc(B.p,e,v)))}
+function dmg(dst,v){const b=Math.min(dst.block,v);dst.block-=b;v-=b;dst.hp=Math.max(0,dst.hp-v);fx(dst.id,v?'-'+v:'막음',v?'r':'b');
+ if(dst===B.p){if(v)sfx('hurt');else sfx('block')}else sfx('hit');
+ if(dst.k==='dragon'&&!dst.enr&&dst.hp>0&&dst.hp<dst.max/2){dst.enr=1;st(dst,'str',3);banner('용이 격노했다!');sfx('roar')}}
+function hit(v,n=1){for(let k=0;k<n;k++){const t=tg();if(!t)return;dmg(t,calc(B.p,t,v+(B.bon||0)))}}
+function hitAll(v){alive().forEach(e=>dmg(e,calc(B.p,e,v+(B.bon||0))))}
 function blk(v){B.p.block+=v;fx('pl','+'+v+' 방어','b')}
-function heal(v){B.p.hp=Math.min(B.p.max,B.p.hp+v);fx('pl','+'+v,'g')}
+function heal(v){B.p.hp=Math.min(B.p.max,B.p.hp+v);fx('pl','+'+v,'g');sfx('heal')}
 function addMana(v){B.mana=Math.min(B.maxM,B.mana+v)}
 function st(ent,k,n){if(n>0)ent.st[k]=(ent.st[k]||0)+n}
+function pst(ent,k,n){n+=(S.hero==='rogue'&&k==='bleed'?1:0)+(has('fang')?1:0)+(k==='bleed'?(B.p.st.venom||0):0);st(ent,k,n)}
 function decay(ent){['vul','weak'].forEach(k=>{if(ent.st[k])ent.st[k]--})}
-function bleed(ent){const b=ent.st.bleed;if(b>0){ent.hp=Math.max(0,ent.hp-b);ent.st.bleed--;fx(ent.id,'-'+b+' 출혈','r')}}
+function dot(ent){[['bleed','출혈'],['burn','화상']].forEach(([k,n])=>{const v=ent.st[k];if(v>0){ent.hp=Math.max(0,ent.hp-v);ent.st[k]--;fx(ent.id,`-${v} ${n}`,'r')}})}
 function draw(n){for(let i=0;i<n;i++){if(B.hand.length>=10)return;if(!B.draw.length){if(!B.disc.length)return;B.draw=shuf(B.disc);B.disc=[]}B.hand.push(B.draw.pop())}}
-function enc(type){const f=S.floor;if(type==='boss')return['dragon'];if(type==='elite')return[pick(['ogre','dk'])].concat(f>6?[pick(['slime','bat'])]:[]);
- return pick(f<4?[['slime'],['bat','slime'],['goblin'],['bat','bat']]:[['goblin','bat'],['wolf'],['slime','slime','bat'],['wolf','slime'],['goblin','goblin'],['wolf','bat']])}
+function dead(){if(B.p.hp>0)return false;if(has('phoenix')&&!S.phx){S.phx=1;B.p.hp=Math.ceil(B.p.max*.3);fx('pl','부활!','g');sfx('relic');banner('불사조 깃털이 타올랐다!');return false}return true}
+function enc(type){const f=S.floor;if(type==='boss')return['dragon'];
+ if(type==='elite')return[pick(['ogre','dk','golem'])].concat(f>6?[pick(['slime','bat','archer'])]:[]);
+ return pick(f<4?[['slime'],['bat','slime'],['goblin'],['bat','bat'],['archer']]:[['goblin','bat'],['wolf'],['slime','slime','bat'],['wolf','slime'],['mush','goblin'],['archer','archer'],['mush','wolf'],['archer','bat','slime']])}
 function mkEn(k,i){const d=E[k];let hp=R(d.hp[0],d.hp[1]);if(k!=='dragon')hp=Math.round(hp*(1+S.floor*.05));const e={id:'e'+i,k,n:d.n,hp,max:hp,block:0,st:{},li:-1,step:0};nextInt(e);return e}
 function nextInt(e){const ai=E[e.k].ai;let i;if(E[e.k].seq)i=e.step++%ai.length;else do{i=R(0,ai.length-1)}while(i===e.li&&ai.length>1);e.li=i;e.int=ai[i]}
-function startBattle(type){B={type,p:{id:'pl',hp:S.hp,max:S.max,block:0,st:{}},en:enc(type).map(mkEn),draw:shuf(S.deck.map(c=>({...c}))),hand:[],disc:[],exh:[],energy:3,maxE:3,mana:3,maxM:3,tgt:0};S.scr='battle';playerTurn()}
-function playerTurn(){B.p.block=0;bleed(B.p);if(B.p.hp<=0)return lose();B.energy=B.maxE;draw(5);render()}
-function canPlay(c){const d=C[c.id];return B.energy>=d.e&&B.mana>=(d.a||0)}
-function play(i){if(busy)return;const c=B.hand[i];if(!c)return;const d=C[c.id];
- if(B.energy<d.e)return toast('행동력이 부족해요');if(B.mana<(d.a||0))return toast('마나가 부족해요 — 명상!');
- B.energy-=d.e;B.mana-=d.a||0;B.hand.splice(i,1);d.f(d.v[c.up?1:0]);(d.x?B.exh:B.disc).push(c);buzz(15);
- if(B.p.hp<=0)return lose();if(!alive().length)return win();render()}
-async function endTurn(){if(busy)return;busy=true;B.disc.push(...B.hand);B.hand=[];decay(B.p);render();
- for(const e of B.en){if(e.hp<=0)continue;await sleep(420);e.block=0;bleed(e);if(e.hp<=0){render();continue}
-  const it=e.int,h0=B.p.hp;if(it.b)e.block+=it.b;if(it.s)st(e,'str',it.s);if(it.vul)st(B.p,'vul',it.vul);if(it.weak)st(B.p,'weak',it.weak);
-  if(it.d)for(let k=0;k<(it.c||1);k++){dmg(B.p,calc(e,B.p,it.d));if(B.p.hp<=0)break}
-  if(it.bleed)st(B.p,'bleed',it.bleed);if(B.p.hp<h0)buzz(60);decay(e);nextInt(e);render();if(B.p.hp<=0){busy=false;await sleep(500);return lose()}}
- await sleep(300);busy=false;if(!alive().length)return win();playerTurn()}
-function win(){S.hp=B.p.hp;const t=B.type;B=null;
- if(t==='boss'){S.scr='win';clear();return render()}
- const el=t==='elite',g=el?R(38,52):R(14,24);S.gold+=g;if(el){S.max+=6;S.hp+=6}
- S.rw={gold:g,hp:el?6:0,cards:shuf([...POOL]).slice(0,3).map(id=>card(id,Math.random()<.12)),title:el?'정예 격파!':'승리!'};S.scr='reward';save();render()}
-function lose(){busy=false;S.scr='lose';clear();render()}
+function startBattle(type){const h=H[S.hero],maxM=h.maxM+(has('crystal')&&h.maxM?1:0);
+ B={type,p:{id:'pl',hp:S.hp,max:S.max,block:S.hero==='knight'?10:0,st:{}},en:enc(type).map(mkEn),draw:shuf(S.deck.map(c=>({...c}))),hand:[],disc:[],exh:[],
+  energy:3,maxE:3+(has('core')?1:0),mana:maxM,maxM,drawN:h.drawN-(has('core')?1:0),tgt:0,turn:0,bon:0};
+ if(has('spike'))st(B.p,'thorns',3);if(has('scale'))st(B.p,'str',1);
+ S.scr='battle';playerTurn(true)}
+function playerTurn(first){B.turn++;const p=B.p;if(!first){if(p.st.keep)p.st.keep--;else p.block=0}
+ if(p.st.plate)p.block+=p.st.plate;if(has('shell'))p.block+=3;
+ dot(p);if(dead())return lose();
+ B.energy=B.maxE;if(!first)B.mana=Math.min(B.maxM,B.mana+H[S.hero].regen);
+ draw(B.drawN+(first&&has('glass')?2:0));B.deal=1;render();banner(first?(B.type==='boss'?'고대의 붉은 용!':B.type==='elite'?'정예 등장!':'전투 시작!'):'내 차례');sfx('turn')}
+function canPlay(c){const d=C[c.id];return B.energy>=cost(c)&&B.mana>=(d.a||0)&&(!d.xa||B.mana>0)}
+function play(i){if(busy||MOD)return;const c=B.hand[i];if(!c)return;const d=C[c.id];
+ if(B.energy<cost(c)){sfx('err');return toast('행동력이 부족해요')}
+ if(B.mana<(d.a||0)||(d.xa&&B.mana<1)){sfx('err');return toast(S.hero==='mage'?'마나가 부족해요 — 명상!':'마나가 부족해요')}
+ flyCard(i);B.energy-=cost(c);B.mana-=d.a||0;B.hand.splice(i,1);
+ B.bon=(d.t==='atk'&&has('whet')?2:0)+(d.t==='mag'&&has('mark')?3:0);
+ sfx(d.t==='atk'?'slash':d.t==='mag'?'magic':d.t==='def'?'block':'card');
+ d.f(d.v[c.up?1:0]);B.bon=0;(d.x?B.exh:B.disc).push(c);buzz(12);
+ if(dead())return lose();
+ if(!alive().length){busy=true;render();return setTimeout(win,650)}
+ render()}
+async function endTurn(){if(busy||MOD)return;busy=true;B.disc.push(...B.hand);B.hand=[];decay(B.p);render();banner('적의 차례');
+ await sleep(500);if(!B)return;
+ for(const e of B.en){if(!B)return;if(e.hp<=0)continue;await sleep(300);if(!B)return;e.block=0;dot(e);if(e.hp<=0){render();continue}
+  await act(e);if(!B)return;decay(e);nextInt(e);render();
+  if(dead()){await sleep(600);busy=false;return lose()}}
+ await sleep(300);if(!B)return;busy=false;if(!alive().length)return win();playerTurn()}
+async function act(e){const it=e.int,p=B.p;
+ if(it.d||it.g){lunge(e.id);await sleep(170)}
+ if(it.b){e.block+=it.b;sfx('block');fx(e.id,'+'+it.b+' 방어','b')}
+ if(it.s){st(e,'str',it.s);sfx('buff')}
+ if(it.h){alive().forEach(a=>{a.hp=Math.min(a.max,a.hp+it.h);fx(a.id,'+'+it.h,'g')});sfx('heal')}
+ let db=0;['vul','weak','bleed','burn'].forEach(k=>{if(it[k]){st(p,k,it[k]);db=1}});if(db)sfx('debuff');
+ if(it.g){const g=Math.min(S.gold,it.g);S.gold-=g;if(g){fx('pl','금화 -'+g,'r');sfx('coin')}}
+ if(it.d){for(let k=0;k<(it.c||1);k++){dmg(p,calc(e,p,it.d));if(p.st.thorns&&e.hp>0)dmg(e,p.st.thorns);if(p.hp<=0||e.hp<=0)break;if(it.c>1)await sleep(120)}buzz(40)}}
+function win(){busy=false;if(!B)return;const t=B.type;S.hp=B.p.hp;S.max=B.p.max;S.turns+=B.turn;B=null;
+ if(has('grail'))S.hp=Math.min(S.max,S.hp+6);
+ if(t==='boss'){stat(true);S.scr='win';ls.del(KEY);jingle(true);return render()}
+ sfx('win');let g=t==='elite'?R(35,50):R(14,24);if(has('lucky'))g=Math.round(g*1.5);S.gold+=g;
+ let rel=null;if(t==='elite'){rel=rollRelic();if(rel)gainRelic(rel)}
+ S.rw={kind:t,gold:g,relic:rel,cards:rollCards(3,t==='elite'?'elite':'norm'),title:t==='elite'?'정예 격파!':'승리!'};S.scr='reward';save();render()}
+function lose(){busy=false;if(B){S.hp=0}stat(false);S.scr='lose';ls.del(KEY);jingle(false);render()}
 function buzz(ms){try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
 
-/* ---------- 화면 ---------- */
-function cardH(c,i,act,ok=true){const d=C[c.id],v=d.v[c.up?1:0];return `<button class="card t-${d.t} ${ok?'':'no'} ${c.up?'up':''}" data-a="${act}" data-i="${i}"><b class="cost">${d.e}</b>${d.a?`<i class="am">${'<u></u>'.repeat(d.a)}</i>`:''}<span class="cn">${d.n}${c.up?'+':''}</span><span class="ct">${TL[d.t]}</span><span class="cd">${d.d(v)}</span></button>`}
-function stH(e){const L={vul:'취약',weak:'약화',bleed:'출혈',str:'힘'};let h=e.block?`<span class="st blk">방어 ${e.block}</span>`:'';for(const k in L)if(e.st[k])h+=`<span class="st ${k}">${L[k]} ${e.st[k]}</span>`;return `<div class="sts">${h}</div>`}
-function intH(e){const it=e.int,p=[];if(it.d)p.push(`<em class="ia">${ICO.sword}${calc(e,B.p,it.d)}${it.c>1?'×'+it.c:''}</em>`);if(it.b)p.push(`<em class="ib">${ICO.shield}${it.b}</em>`);if(it.s)p.push(`<em>힘+${it.s}</em>`);if(it.vul)p.push(`<em>취약${it.vul}</em>`);if(it.weak)p.push(`<em>약화${it.weak}</em>`);if(it.bleed)p.push(`<em>출혈${it.bleed}</em>`);return `<div class="int">${p.join('')}</div>`}
-const mini=e=>`<div class="mini"><i style="width:${e.hp/e.max*100}%"></i><span>${e.hp}/${e.max}</span></div>`;
-function topBar(){const hp=B?B.p.hp:S.hp,mx=B?B.p.max:S.max;return `<div class="bar"><div class="hp"><i style="width:${hp/mx*100}%"></i><span>체력 ${hp}/${mx}</span></div><span class="chip gold">금화 ${S.gold}</span><span class="chip">${Math.min(S.floor+1,13)}층/13</span><button class="btn alt" data-a="deck">덱 ${S.deck.length}</button></div>`}
-const V={
-title(){const sv=load();return `<div class="wrap"><div class="hero"><svg viewBox="0 0 320 220" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c0d15"/><stop offset="1" stop-color="#7a3446"/></linearGradient></defs><rect width="320" height="220" fill="url(#sk)"/><circle cx="70" cy="50" r="24" fill="#f5ecd9" opacity=".92"/><circle cx="20" cy="30" r="1.5" fill="#fff"/><circle cx="120" cy="20" r="1.2" fill="#fff"/><circle cx="290" cy="40" r="1.5" fill="#fff"/><circle cx="250" cy="14" r="1" fill="#fff"/><path d="M0 220V170q60-30 120-12t110-6 90 10v58z" fill="#2a1420"/><path d="M150 180V70h40v110z" fill="#3b1d29"/><path d="M144 74h52l-6-14h-40z" fill="#4a2230"/><path d="M146 60l24-36 24 36z" fill="#8f1d22"/><rect x="164" y="90" width="12" height="16" rx="6" fill="#ffb547"/><rect x="164" y="124" width="12" height="16" rx="6" fill="#ffb547"/><rect x="164" y="156" width="12" height="16" rx="6" fill="#e08a2a"/><path d="M144 74v-8M156 74v-8M168 74v-8M180 74v-8M192 74v-8" stroke="#4a2230" stroke-width="5"/><path d="M226 54q14-12 26-2 10-10 22-4-8 2-10 10-12-4-18 6-6-10-20-10z" fill="#1c0d15"/><path d="M252 50q6 4 8 10" stroke="#1c0d15" stroke-width="3"/><path d="M0 220v-24q70-18 160 0t160-6v30z" fill="#1c0d15"/><path d="M62 196l8-26 8 26z" fill="#c9d2d8"/><circle cx="70" cy="166" r="5" fill="#f0c19c"/><path d="M78 186l12-22" stroke="#e9eef1" stroke-width="3" stroke-linecap="round"/><path d="M62 178q-6 12-4 18h8z" fill="#2f5fb5"/></svg></div>
-<h1>용의 탑</h1><p style="font-size:17px;color:#e8c9b0">카드를 모아 덱을 키우며 13층 탑을 올라, 꼭대기의 고대 용을 쓰러뜨리세요.</p>
-<div class="rules"><p><b>행동력</b> 매 턴 3. 카드 왼쪽 위 숫자만큼 씁니다.</p><p><b>마나</b> 최대 3개. 마법 카드는 마나도 써요. 바닥나면 <b>명상</b>으로 채우세요.</p><p><b>적의 의도</b> 적 머리 위에 다음 행동이 보여요. 공격이 오면 방어도로 막으세요.</p><p>적을 눌러 공격 대상을 고르고, 카드를 눌러 사용합니다.</p></div>
-<div class="row-btns"><button class="btn" data-a="start">새 원정 시작</button>${sv?`<button class="btn alt" data-a="cont">이어하기 (${sv.floor+1}층)</button>`:''}</div></div>`},
-map(){let h='';for(let r=S.map.length-1;r>=0;r--){const cur=r===S.floor,past=r<S.floor;h+=`<div class="mrow ${cur?'cur':''} ${past?'past':''}" ${cur?'id="currow"':''}><span class="rn">${r+1}층</span>${S.map[r].map((t,i)=>`<button class="node n-${t} ${S.path[r]===i?'went':''}" ${cur?`data-a="node" data-i="${i}"`:'disabled'} aria-label="${NL[t]}">${ICO[t]}<small>${NL[t]}</small></button>`).join('')}</div>`}
- return topBar()+`<div class="wrap"><h2>탑의 지도</h2><p style="color:#e8c9b0">빛나는 줄에서 다음 방을 고르세요. 위로 갈수록 용에게 가까워집니다.</p><div class="chart">${h}</div><button class="btn alt" data-a="quit">처음 화면으로 (저장됨)</button></div>`},
-battle(){const p=B.p;return topBar()+`<div class="field"><div class="ent" id="pl">${stH(p)}<div class="spr">${SP.pl}</div><div class="nm">용사</div>${mini(p)}</div>
-<div class="foes">${B.en.map((e,i)=>e.hp>0?`<button class="ent foe ${i===B.tgt?'sel':''} ${e.k==='dragon'?'boss':''}" id="${e.id}" data-a="tgt" data-i="${i}">${intH(e)}<div class="spr">${SP[e.k]}</div><div class="nm">${e.n}</div>${mini(e)}${stH(e)}</button>`:'').join('')}</div></div>
-<div class="res"><div class="orb" aria-label="행동력">${B.energy}/${B.maxE}</div><div><div class="mana">${[...Array(B.maxM)].map((_,i)=>`<span class="gem ${i<B.mana?'on':''}"></span>`).join('')}</div><div class="pile">마나 ${B.mana}/${B.maxM}</div></div><div class="pile">뽑을 카드 ${B.draw.length}<br>버린 카드 ${B.disc.length}</div><button class="btn" data-a="end" ${busy?'disabled':''}>${busy?'적의 차례…':'턴 종료'}</button></div>
-<div class="hand">${B.hand.map((c,i)=>cardH(c,i,'play',canPlay(c))).join('')||'<p style="color:#e8c9b0;padding:40px 0">손패가 비었어요</p>'}</div>`},
-reward(){const w=S.rw;return topBar()+`<div class="wrap"><div class="panel center"><h2>${w.title}</h2><p class="gold" style="font-weight:900">금화 +${w.gold}${w.hp?` · 최대 체력 +${w.hp}`:''}</p></div><div class="panel"><p style="font-weight:700">덱에 넣을 카드 1장을 고르세요</p><div class="grid">${w.cards.map((c,i)=>cardH(c,i,'pickc')).join('')}</div></div><button class="btn alt" data-a="next">카드 없이 계속</button></div>`},
-treasure(){const w=S.rw;return topBar()+`<div class="wrap"><div class="panel center"><h2>먼지 쌓인 보물상자</h2><p class="gold" style="font-weight:900">금화 +${w.gold}</p><p>안에 강화된 카드가 들어 있어요. 하나를 가져가세요.</p></div><div class="grid">${w.cards.map((c,i)=>cardH(c,i,'pickc')).join('')}</div><button class="btn alt" data-a="next">그냥 떠나기</button></div>`},
-shop(){const s=S.shop;return topBar()+`<div class="wrap"><h2>떠돌이 상인</h2><div class="grid">${s.items.map((it,i)=>`<div class="${it.sold?'sold':''}">${cardH(it.c,i,'buy',S.gold>=it.p)}<span class="price">${it.p} 금화</span></div>`).join('')}</div>
-<div class="panel"><div class="row-btns"><button class="btn alt" data-a="srm" ${s.rm||S.gold<60||S.deck.length<6?'disabled':''}>카드 1장 버리기 · 60</button><button class="btn alt" data-a="sheal" ${s.heal||S.gold<40?'disabled':''}>체력 20 회복 · 40</button></div></div><button class="btn" data-a="next">다음 층으로</button></div>`},
-rest(){return topBar()+`<div class="wrap"><div class="panel center"><svg viewBox="0 0 24 24" width="90" height="90">${ICO.rest.replace(/<\/?svg[^>]*>/g,'')}</svg><h2>계단참의 모닥불</h2><p>잠시 쉬어 가거나, 장비를 손질하세요.</p></div><div class="row-btns"><button class="btn" data-a="rheal">휴식 · 체력 ${Math.ceil(S.max*.3)} 회복</button><button class="btn alt" data-a="rup">카드 1장 강화</button></div></div>`},
-win(){return `<div class="wrap" style="justify-content:center;text-align:center;align-items:center"><div class="spr" style="max-width:200px">${SP.pl}</div><h1>용을 쓰러뜨렸다!</h1><p>탑 꼭대기에 깃발을 꽂았어요. 덱 ${S.deck.length}장, 남은 체력 ${S.hp}.</p><button class="btn" data-a="title">처음으로</button></div>`},
-lose(){return `<div class="wrap" style="justify-content:center;text-align:center;align-items:center"><div class="spr" style="max-width:180px;filter:grayscale(1)">${SP.pl}</div><h1>원정 실패…</h1><p>${S.floor+1}층에서 쓰러졌어요. 다시 도전해 보세요!</p><button class="btn" data-a="start">새 원정 시작</button><button class="btn alt" data-a="title">처음으로</button></div>`}
-};
-function modalH(){const m=S.modal;if(!m)return'';const T={view:'내 덱',remove:'버릴 카드를 고르세요 (60 금화)',upgrade:'강화할 카드를 고르세요'};
- const list=S.deck.map((c,i)=>[c,i]).sort((a,b)=>a[0].id.localeCompare(b[0].id));
- return `<div class="modal"><div class="in"><div class="mh"><h2 style="font-size:24px">${T[m]}</h2><button class="btn alt" data-a="mclose">닫기</button></div><div class="grid">${list.map(([c,i])=>m==='upgrade'&&c.up?'':cardH(m==='upgrade'?{...c,up:true}:c,i,m==='view'?'none':'mpick')).join('')}</div>${m==='upgrade'?'<p style="text-align:center;color:#e8c9b0">강화 후 모습으로 표시됩니다</p>':''}</div></div>`}
-function render(){$('#app').innerHTML=(S?V[S.scr]():V.title())+(S?modalH():'');if(S&&S.scr==='map'){const c=$('#currow');if(c)c.scrollIntoView({block:'center'})}flushFx()}
+/* ================= 연출 ================= */
 function fx(id,t,c){FX.push([id,t,c])}
-function flushFx(){const L=$('#fx');FX.forEach(([id,t,c])=>{const el=document.getElementById(id);if(!el)return;const r=el.getBoundingClientRect(),d=document.createElement('div');d.className='fl '+c;d.textContent=t;d.style.left=(r.left+r.width/2)+'px';d.style.top=(r.top+r.height*.35)+'px';L.appendChild(d);setTimeout(()=>d.remove(),950);if(c==='r'){const s=el.querySelector('.spr');if(s){s.classList.remove('shk');void s.offsetWidth;s.classList.add('shk')}}});FX=[]}
-let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1400)}
+function flushFx(){const L=$('#fx');FX.forEach(([id,t,c])=>{const el=document.getElementById(id);if(!el)return;const r=el.getBoundingClientRect(),d=document.createElement('div');d.className='fl '+c;d.textContent=t;d.style.left=(r.left+r.width/2+R(-14,14))+'px';d.style.top=(r.top+r.height*.3)+'px';L.appendChild(d);setTimeout(()=>d.remove(),950);
+ if(c==='r'){const s=el.querySelector('.spr');if(s){s.classList.remove('shk');void s.offsetWidth;s.classList.add('shk')}if(id==='pl'){const f=$('.field');if(f){f.classList.remove('quake');void f.offsetWidth;f.classList.add('quake')}}}});FX=[]}
+function banner(t){const d=document.createElement('div');d.className='banner';d.textContent=t;$('#fx').appendChild(d);setTimeout(()=>d.remove(),1150)}
+function lunge(id){const el=document.getElementById(id);if(el){el.classList.remove('lunge');void el.offsetWidth;el.classList.add('lunge')}}
+function flyCard(i){const el=document.querySelector(`.hand [data-i="${i}"]`);if(!el)return;const r=el.getBoundingClientRect(),cl=el.cloneNode(true);cl.removeAttribute('data-a');cl.classList.add('fly');Object.assign(cl.style,{position:'fixed',left:r.left+'px',top:r.top+'px',margin:0});$('#fx').appendChild(cl);setTimeout(()=>cl.remove(),460)}
+let tt;function toast(m,ms=1500){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),ms)}
 
-/* ---------- 입력 ---------- */
+/* ================= 화면 ================= */
+function cardH(c,i,act,ok=true){const d=C[c.id],v=d.v[c.up?1:0];return `<button class="card t-${d.t} r-${d.r} ${ok?'':'no'} ${c.up?'up':''}" data-a="${act}" data-i="${i}"><b class="cost">${cost(c)}</b>${d.a?`<i class="am">${'<u></u>'.repeat(d.a)}</i>`:d.xa?'<i class="am"><u></u>X</i>':''}<span class="cn">${d.n}${c.up?'+':''}</span><span class="ct">${TYI[d.t]}${TL[d.t]}</span><span class="cd">${d.d(v)}</span></button>`}
+const STL={vul:'취약',weak:'약화',bleed:'출혈',burn:'화상',str:'힘',thorns:'가시',keep:'방어 유지',plate:'철갑',venom:'맹독'};
+function stH(e){let h=e.block?`<span class="st blk">방어 ${e.block}</span>`:'';for(const k in STL)if(e.st[k])h+=`<span class="st ${k}">${STL[k]} ${e.st[k]}</span>`;return `<div class="sts">${h}</div>`}
+function intH(e){const it=e.int,p=[];if(it.d)p.push(`<em class="ia">${ICO.sword}${calc(e,B.p,it.d)}${it.c>1?'×'+it.c:''}</em>`);if(it.b)p.push(`<em class="ib">${ICO.shield}${it.b}</em>`);if(it.h)p.push(`<em class="ih">회복 ${it.h}</em>`);if(it.s)p.push(`<em>힘+${it.s}</em>`);if(it.g)p.push(`<em>금화 훔치기</em>`);['vul','weak','bleed','burn'].forEach(k=>{if(it[k])p.push(`<em>${STL[k]}${it[k]}</em>`)});return `<div class="int">${p.join('')}</div>`}
+const mini=e=>`<div class="mini"><i style="width:${e.hp/e.max*100}%"></i><span>${e.hp}/${e.max}</span></div>`;
+const relH=(k,i)=>`<button class="rel" style="--rc:${RL[k].c}" data-a="relinfo" data-i="${i}" aria-label="${RL[k].n}">${RL[k].n[0]}</button>`;
+function topBar(){const hp=B?B.p.hp:S.hp,mx=B?B.p.max:S.max;return `<div class="bar"><div class="hp"><i style="width:${hp/mx*100}%"></i><span>체력 ${hp}/${mx}</span></div><span class="chip gold">금화 ${S.gold}</span><span class="chip">${Math.min(S.floor+1,13)}층</span><button class="btn alt" data-a="deck">덱 ${S.deck.length}</button><button class="ico" data-a="opts" aria-label="설정">${ICO.note}</button>${S.relics.length?`<div class="rels">${S.relics.map(relH).join('')}</div>`:''}</div>`}
+const towerSvg=`<svg viewBox="0 0 320 220" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c0d15"/><stop offset="1" stop-color="#7a3446"/></linearGradient></defs><rect width="320" height="220" fill="url(#sk)"/><circle cx="70" cy="50" r="24" fill="#f5ecd9" opacity=".92"/><circle cx="20" cy="30" r="1.5" fill="#fff"/><circle cx="120" cy="20" r="1.2" fill="#fff"/><circle cx="290" cy="40" r="1.5" fill="#fff"/><circle cx="250" cy="14" r="1" fill="#fff"/><path d="M0 220V170q60-30 120-12t110-6 90 10v58z" fill="#2a1420"/><path d="M150 180V70h40v110z" fill="#3b1d29"/><path d="M144 74h52l-6-14h-40z" fill="#4a2230"/><path d="M146 60l24-36 24 36z" fill="#8f1d22"/><rect x="164" y="90" width="12" height="16" rx="6" fill="#ffb547"/><rect x="164" y="124" width="12" height="16" rx="6" fill="#ffb547"/><rect x="164" y="156" width="12" height="16" rx="6" fill="#e08a2a"/><path d="M144 74v-8M156 74v-8M168 74v-8M180 74v-8M192 74v-8" stroke="#4a2230" stroke-width="5"/><path d="M226 54q14-12 26-2 10-10 22-4-8 2-10 10-12-4-18 6-6-10-20-10z" fill="#1c0d15"/><path d="M0 220v-24q70-18 160 0t160-6v30z" fill="#1c0d15"/></svg>`;
+const V={
+title(){const sv=load();return `<div class="wrap"><div class="hero">${towerSvg}</div>
+<h1>용의 탑</h1><p style="font-size:17px" class="soft">세 용사 중 하나를 골라 13층 탑을 오르세요. 카드를 모으고, 유물을 줍고, 꼭대기의 고대 용을 쓰러뜨리면 승리!</p>
+<div class="row-btns"><button class="btn" data-a="pickhero">새 원정 시작</button>${sv?`<button class="btn alt" data-a="cont">이어하기 · ${H[sv.hero].n.split(' ')[1]} ${sv.floor+1}층</button>`:''}<button class="btn ghost" data-a="opts">소리 설정</button></div></div>`},
+pick(){const st=ls.get(SKEY,{win:{},best:{}});return `<div class="wrap"><div class="row-btns" style="justify-content:space-between;align-items:center"><h2>용사를 고르세요</h2><button class="btn ghost" data-a="title">뒤로</button></div><div class="heroes">${HK.map((k,i)=>{const h=H[k];return `<button class="hc" data-a="hero" data-i="${i}"><div class="spr">${SP[k]}</div><div><b>${h.n}</b><span class="soft" style="font-weight:700">${h.sub}</span><div class="tags">${h.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div><p>${h.p}</p><p style="margin-top:6px;color:var(--gold);font-weight:700">최고 ${st.best[k]||0}층 · 승리 ${st.win[k]||0}회</p></div></button>`}).join('')}</div></div>`},
+map(){const rows=S.map.length,gap=82,H0=60+(rows-1)*gap+50,xy=(r,x)=>[r===rows-1?50:12+x.c*(76/3)+x.j,60+(rows-1-r)*gap];
+ let lines='',nodes='';S.map.forEach((row,r)=>row.forEach((x,i)=>{const[a,b]=xy(r,x);x.n.forEach(ni=>{const y=S.map[r+1][ni],[c,d]=xy(r+1,y),walked=S.path[r]===i&&S.path[r+1]===ni,next=r===S.floor-1&&S.pos===i;lines+=`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${walked?'#f0c04a':next?'#f5ecd9':'rgba(245,236,217,.22)'}" stroke-width="${walked||next?3:2}" ${walked?'':'stroke-dasharray="5 6"'} vector-effect="non-scaling-stroke"/>`});
+  const can=r===S.floor&&canGo(i),went=S.path[r]===i;nodes+=`<button class="node n-${x.t} ${can?'can':went?'went':'off'}" style="left:${a}%;top:${b}px" ${can?`data-a="node" data-i="${i}"`:'disabled'} ${can&&!nodes.includes('id="go"')?'id="go"':''} aria-label="${r+1}층 ${NL[x.t]}">${ICO[x.t]}<small>${NL[x.t]}</small></button>`}));
+ return topBar()+`<div class="wrap"><div class="row-btns" style="justify-content:space-between;align-items:center"><h2>탑의 지도</h2><button class="btn ghost" data-a="quit">저장하고 나가기</button></div><p class="soft">빛나는 방 중 하나를 고르세요. 길은 선으로 이어진 곳으로만 갈 수 있어요.</p><div class="mapbox" style="height:${H0}px"><svg viewBox="0 0 100 ${H0}" preserveAspectRatio="none">${lines}</svg>${nodes}</div></div>`},
+battle(){const p=B.p,deal=B.deal;B.deal=0;return topBar()+`<div class="field ${B.type==='boss'?'boss':''}"><span class="torch" style="left:22%"></span><span class="torch" style="left:74%"></span><div class="ent" id="pl">${stH(p)}<div class="spr">${SP[S.hero]}</div><div class="nm">${H[S.hero].n.split(' ')[1]}</div>${mini(p)}</div>
+<div class="foes">${B.en.map((e,i)=>{let cls='';if(e.hp<=0){cls=e.fade?'gone':'dying';e.fade=1}return `<button class="ent foe ${i===B.tgt&&e.hp>0?'sel':''} ${e.k==='dragon'?'boss':''} ${cls}" id="${e.id}" data-a="tgt" data-i="${i}">${e.hp>0?intH(e):'<div class="int"></div>'}<div class="spr">${SP[e.k]}</div><div class="nm">${e.n}</div>${mini(e)}${stH(e)}</button>`}).join('')}</div></div>
+<div class="res"><div class="orb" aria-label="행동력">${B.energy}/${B.maxE}</div>${B.maxM?`<div><div class="mana">${[...Array(B.maxM)].map((_,i)=>`<span class="gem ${i<B.mana?'on':''}"></span>`).join('')}</div><div class="pile">마나 ${B.mana}/${B.maxM}</div></div>`:''}<button class="pile" data-a="pdraw">뽑을 카드 ${B.draw.length}<br>버린 카드 ${B.disc.length}</button><button class="ico" data-a="help" aria-label="도움말" style="font-weight:900">?</button><button class="btn end" data-a="end" ${busy?'disabled':''}>${busy?'적의 차례…':'턴 종료'}</button></div>
+<div class="hand ${deal?'deal':''}">${B.hand.map((c,i)=>cardH(c,i,'play',canPlay(c))).join('')||'<p class="soft" style="padding:40px 0">손패가 비었어요</p>'}</div>`},
+reward(){const w=S.rw;return topBar()+`<div class="wrap"><div class="panel center"><h2>${w.title}</h2>${w.gold?`<p class="gold" style="font-weight:900">금화 +${w.gold}</p>`:''}${w.relic?`<div class="relrow">${relH(w.relic,S.relics.indexOf(w.relic)).replace('class="rel"','class="rel big"')}<div><b>유물 「${RL[w.relic].n}」</b><p class="soft">${RL[w.relic].d}</p></div></div>`:''}</div><div class="panel"><p style="font-weight:700">덱에 넣을 카드 1장을 고르세요</p><div class="grid">${w.cards.map((c,i)=>cardH(c,i,'pickc')).join('')}</div></div><button class="btn alt" data-a="next">카드 없이 계속</button></div>`},
+treasure(){const w=S.rw;return topBar()+`<div class="wrap"><div class="panel center"><svg viewBox="0 0 24 24" width="80" height="80">${ICO.treasure.replace(/<\/?svg[^>]*>/g,'')}</svg><h2>먼지 쌓인 보물상자</h2><p class="gold" style="font-weight:900">금화 +${w.gold}</p>${w.relic?`<div class="relrow">${relH(w.relic,S.relics.indexOf(w.relic)).replace('class="rel"','class="rel big"')}<div><b>유물 「${RL[w.relic].n}」</b><p class="soft">${RL[w.relic].d}</p></div></div>`:''}</div>${w.cards.length?`<div class="grid">${w.cards.map((c,i)=>cardH(c,i,'pickc')).join('')}</div>`:''}<button class="btn" data-a="next">계속</button></div>`},
+shop(){const s=S.shop;return topBar()+`<div class="wrap"><h2>떠돌이 상인</h2><p class="soft">"좋은 물건 많다네. 금화만 있다면야."</p><div class="grid">${s.items.map((it,i)=>`<div class="${it.sold?'sold':''}">${cardH(it.c,i,'buy',S.gold>=it.p)}<span class="price">${it.p} 금화</span></div>`).join('')}</div>
+${s.rel?`<div class="panel ${s.rel.sold?'sold':''}"><div class="relrow">${relH(s.rel.k,0).replace('data-a="relinfo"','data-a="none"').replace('class="rel"','class="rel big"')}<div style="flex:1"><b>유물 「${RL[s.rel.k].n}」</b><p class="soft">${RL[s.rel.k].d}</p></div><button class="btn alt" data-a="buyrel" ${S.gold<s.rel.p?'disabled':''}>${s.rel.p} 금화</button></div></div>`:''}
+<div class="panel"><div class="row-btns"><button class="btn alt" data-a="srm" ${s.rm||S.gold<60||S.deck.length<6?'disabled':''}>카드 1장 버리기 · 60</button><button class="btn alt" data-a="sheal" ${s.heal||S.gold<40||S.hp>=S.max?'disabled':''}>체력 20 회복 · 40</button></div></div><button class="btn" data-a="next">다음 층으로</button></div>`},
+rest(){return topBar()+`<div class="wrap"><div class="panel center"><svg viewBox="0 0 24 24" width="90" height="90">${ICO.rest.replace(/<\/?svg[^>]*>/g,'')}</svg><h2>계단참의 모닥불</h2><p class="soft">잠시 쉬어 가거나, 장비를 손질하세요.</p></div><div class="row-btns"><button class="btn" data-a="rheal">휴식 · 체력 ${Math.ceil(S.max*.3)} 회복</button><button class="btn alt" data-a="rup" ${S.deck.every(c=>c.up)?'disabled':''}>카드 1장 강화</button></div></div>`},
+event(){const ev=EV[S.ev.i];return topBar()+`<div class="wrap"><div class="panel center"><svg viewBox="0 0 24 24" width="70" height="70" style="color:#e6dcf5">${ICO.event.replace(/<\/?svg[^>]*>/g,'').replaceAll('#5a3a8a','#e6dcf5')}</svg><h2>${ev.t}</h2><p style="font-size:17px">${S.ev.res||ev.d}</p></div>
+${S.ev.res?'<button class="btn" data-a="next">계속</button>':`<div class="row-btns" style="flex-direction:column">${ev.o.map((o,i)=>`<button class="btn ${i?'alt':''}" data-a="evo" data-i="${i}" ${o.need&&!o.need()?'disabled':''}>${o.l}</button>`).join('')}</div>`}</div>`},
+win(){return `<div class="wrap" style="justify-content:center;text-align:center;align-items:center"><div class="spr" style="max-width:200px">${SP[S.hero]}</div><h1>용을 쓰러뜨렸다!</h1><p>${H[S.hero].n}, 탑 꼭대기에 깃발을 꽂았어요.</p><p class="soft">덱 ${S.deck.length}장 · 유물 ${S.relics.length}개 · 남은 체력 ${S.hp} · ${S.turns}턴</p><button class="btn" data-a="pickhero">다른 용사로 도전</button><button class="btn alt" data-a="title">처음으로</button></div>`},
+lose(){return `<div class="wrap" style="justify-content:center;text-align:center;align-items:center"><div class="spr" style="max-width:180px;filter:grayscale(1)">${SP[S.hero]}</div><h1>원정 실패…</h1><p>${H[S.hero].n}, ${S.floor+1}층에서 쓰러졌어요.</p><p class="soft">덱 ${S.deck.length}장 · 유물 ${S.relics.length}개</p><button class="btn" data-a="pickhero">다시 도전</button><button class="btn alt" data-a="title">처음으로</button></div>`}
+};
+function modalH(){if(!MOD)return'';const m=MOD.m;let title='',body='';
+ if(m==='view'||m==='remove'||m==='upgrade'){title={view:'내 덱',remove:MOD.ctx==='shop'?'버릴 카드를 고르세요 (60 금화)':'잊을 카드를 고르세요',upgrade:'강화할 카드를 고르세요'}[m];
+  const list=S.deck.map((c,i)=>[c,i]).sort((a,b)=>a[0].id.localeCompare(b[0].id));
+  body=`<div class="grid">${list.map(([c,i])=>m==='upgrade'&&c.up?'':cardH(m==='upgrade'?{...c,up:true}:c,i,m==='view'?'none':'mpick')).join('')}</div>${m==='upgrade'?'<p class="soft" style="text-align:center">강화된 모습으로 보여요</p>':''}`}
+ else if(m==='pile'){title='뽑을 카드 (순서는 비밀)';body=`<div class="grid">${[...B.draw].sort((a,b)=>a.id.localeCompare(b.id)).map((c,i)=>cardH(c,i,'none')).join('')||'<p class="soft">없음</p>'}</div><h3 style="margin-top:18px">버린 카드</h3><div class="grid">${B.disc.map((c,i)=>cardH(c,i,'none')).join('')||'<p class="soft">없음</p>'}</div>`}
+ else if(m==='help'){title='도움말';body=`<div class="gl"><p><b>행동력</b> 카드 왼쪽 위 숫자만큼 써요. 매 턴 다시 차요.</p><p><b>마나</b> 카드 오른쪽 위 마름모만큼 써요. 용사마다 회복량이 달라요.</p><p><b>적 머리 위 표시</b> 다음 행동이에요. 칼은 공격(숫자 × 횟수), 방패는 방어도.</p><p><b>방어도</b> 받는 피해를 먼저 막아요. 내 턴이 시작되면 사라져요.</p><p><b>취약</b> 받는 피해 50% 증가. <b>약화</b> 주는 피해 25% 감소.</p><p><b>출혈·화상</b> 턴 시작마다 수치만큼 피해를 입고 1 줄어요.</p><p><b>힘</b> 공격 피해가 수치만큼 늘어요. <b>가시</b> 공격받을 때마다 수치만큼 되돌려줘요.</p><p><b>소멸</b> 쓰면 이번 전투 동안 덱에서 빠져요.</p><p>적을 눌러 공격 대상을 바꿀 수 있어요.</p></div>`}
+ else if(m==='opts'){title='설정';body=`<div class="tog"><span>배경음악</span><button class="btn ${OPT.music?'':'alt'}" data-a="tmusic">${OPT.music?'켜짐':'꺼짐'}</button></div><div class="tog"><span>효과음</span><button class="btn ${OPT.sfx?'':'alt'}" data-a="tsfx">${OPT.sfx?'켜짐':'꺼짐'}</button></div>${S&&S.scr!=='win'&&S.scr!=='lose'?`<div class="tog"><span>이번 원정 포기</span><button class="btn alt" data-a="abandon">${MOD.sure?'정말 포기':'포기하기'}</button></div>`:''}`}
+ return `<div class="modal"><div class="in"><div class="mh"><h2 style="font-size:24px">${title}</h2><button class="btn alt" data-a="mclose">닫기</button></div>${body}</div></div>`}
+function render(){const scr=S?S.scr:M;$('#app').innerHTML=(S?V[scr]():V[M]())+modalH();
+ if(scr==='map'&&!MOD){const g=$('#go');if(g)g.scrollIntoView({block:'center'})}
+ music(scr==='battle'?(B&&B.type==='boss'?'boss':'battle'):(scr==='win'||scr==='lose')?null:'menu');flushFx()}
+
+/* ================= 입력 ================= */
 const A={
-start:newRun,
-cont(){S=load();if(S){S.scr='map';S.modal=null}render()},
-title(){S=null;B=null;render()},
-quit(){save();S=null;render()},
-node(i){if(S.path[S.floor]!==undefined)return;S.path[S.floor]=i;const t=S.map[S.floor][i];
- if(t==='battle'||t==='elite'||t==='boss')startBattle(t);
- else if(t==='rest'){S.scr='rest';render()}
- else if(t==='shop'){S.shop={items:shuf([...POOL]).slice(0,5).map(id=>{const up=Math.random()<.2;return{c:card(id,up),p:R(42,70)+(up?25:0),sold:0}}),rm:0,heal:0};S.scr='shop';render()}
- else{const g=R(40,70);S.gold+=g;S.rw={gold:g,cards:shuf([...POOL]).slice(0,2).map(id=>card(id,true))};S.scr='treasure';render()}},
+pickhero(){S=null;B=null;M='pick';render()},
+hero(i){sfx('click');newRun(HK[i])},
+cont(){S=load();if(S){S.scr=S.scr==='battle'?'map':S.scr;MOD=null}render()},
+title(){S=null;B=null;M='title';render()},
+quit(){save();S=null;M='title';render()},
+node(i){if(S.floor>=S.map.length||!canGo(i))return;sfx('click');S.pos=i;S.path[S.floor]=i;const t=S.map[S.floor][i].t;
+ if(t==='battle'||t==='elite'||t==='boss')return startBattle(t);
+ if(t==='rest')S.scr='rest';
+ else if(t==='shop'){const rk=rollRelic();S.shop={items:rollCards(5,'shop').map(c=>({c,p:price(c),sold:0})),rel:rk?{k:rk,p:R(140,170),sold:0}:null,rm:0,heal:0};S.scr='shop'}
+ else if(t==='event'){let opts=EV.map((_,k)=>k).filter(k=>!S.seen.includes(k));if(!opts.length)opts=EV.map((_,k)=>k);const k=pick(opts);S.seen.push(k);S.ev={i:k,res:null};S.scr='event'}
+ else{let g=R(40,70);if(has('lucky'))g=Math.round(g*1.5);S.gold+=g;const rel=rollRelic();if(rel)gainRelic(rel);S.rw={gold:g,relic:rel,cards:rel?[]:rollCards(2,'rare',true)};S.scr='treasure';sfx('coin')}
+ save();render()},
 play,
-tgt(i){if(busy)return;B.tgt=i;render()},
-end:endTurn,
-pickc(i){S.deck.push(S.rw.cards[i]);proceed()},
-next:proceed,
-buy(i){const it=S.shop.items[i];if(it.sold)return;if(S.gold<it.p)return toast('금화가 부족해요');S.gold-=it.p;it.sold=1;S.deck.push(it.c);render()},
-srm(){S.modal='remove';render()},
-sheal(){S.gold-=40;S.hp=Math.min(S.max,S.hp+20);S.shop.heal=1;render()},
-rheal(){S.hp=Math.min(S.max,S.hp+Math.ceil(S.max*.3));proceed()},
-rup(){if(S.deck.every(c=>c.up))return toast('강화할 카드가 없어요');S.modal='upgrade';render()},
-deck(){S.modal='view';render()},
-mclose(){S.modal=null;render()},
-mpick(i){if(S.modal==='remove'){S.deck.splice(i,1);S.gold-=60;S.shop.rm=1;S.modal=null;render()}else if(S.modal==='upgrade'){S.deck[i].up=true;proceed()}},
+tgt(i){if(busy||!B.en[i]||B.en[i].hp<=0)return;B.tgt=i;sfx('click');render()},
+end(){sfx('click');endTurn()},
+pickc(i){S.deck.push(S.rw.cards[i]);sfx('card');proceed()},
+next(){sfx('click');proceed()},
+buy(i){const it=S.shop.items[i];if(it.sold)return;if(S.gold<it.p){sfx('err');return toast('금화가 부족해요')}S.gold-=it.p;it.sold=1;S.deck.push(it.c);sfx('coin');save();render()},
+buyrel(){const r=S.shop.rel;if(!r||r.sold||S.gold<r.p)return;S.gold-=r.p;r.sold=1;gainRelic(r.k);save();render()},
+srm(){MOD={m:'remove',ctx:'shop'};render()},
+sheal(){S.gold-=40;S.hp=Math.min(S.max,S.hp+20);S.shop.heal=1;sfx('heal');save();render()},
+rheal(){S.hp=Math.min(S.max,S.hp+Math.ceil(S.max*.3));sfx('heal');proceed()},
+rup(){MOD={m:'upgrade',ctx:'rest'};render()},
+evo(i){const o=EV[S.ev.i].o[i];if(o.need&&!o.need())return;const r=o.f();if(r)S.ev.res=r;save();render()},
+deck(){MOD={m:'view'};render()},
+pdraw(){MOD={m:'pile'};render()},
+help(){MOD={m:'help'};render()},
+opts(){MOD={m:'opts'};render()},
+tmusic(){setOpt('music');render()},
+tsfx(){setOpt('sfx');render()},
+abandon(){if(!MOD.sure){MOD.sure=1;return render()}MOD=null;B=null;busy=false;stat(false);ls.del(KEY);S=null;M='title';render()},
+mclose(){if(MOD&&(MOD.ctx==='event')&&!S.ev.res)S.ev.res='마음을 바꿨다.';MOD=null;render()},
+mpick(i){const m=MOD.m,ctx=MOD.ctx;
+ if(m==='remove'){const c=S.deck.splice(i,1)[0];if(ctx==='shop'){S.gold-=60;S.shop.rm=1}else S.ev.res=`「${C[c.id].n}」 카드를 덱에서 지웠다.`}
+ else if(m==='upgrade'){S.deck[i].up=true;sfx('relic');if(ctx==='rest'){MOD=null;return proceed()}S.ev.res=`「${C[S.deck[i].id].n}」 카드가 강해졌다!`}
+ MOD=null;save();render()},
+relinfo(i){const k=S.relics[i];if(k)toast(`${RL[k].n} — ${RL[k].d}`,2600)},
 none(){}
 };
 document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t||t.disabled)return;const f=A[t.dataset.a];if(f)f(+t.dataset.i)});
-document.addEventListener('keydown',e=>{if(S&&S.scr==='battle'&&!S.modal){if(e.key==='e'||e.key==='E')endTurn();const n=+e.key;if(n>=1&&n<=9)play(n-1)}});
+document.addEventListener('keydown',e=>{if(S&&S.scr==='battle'&&!MOD){if(e.key==='e'||e.key==='E')endTurn();const n=+e.key;if(n>=1&&n<=9)play(n-1)}});
 render();
 try{if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 }
