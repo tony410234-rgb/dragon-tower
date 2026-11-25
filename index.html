@@ -353,6 +353,7 @@ button.logo{min-height:40px}
 details.lvl{font-size:13px;color:var(--soft)}details.lvl summary{cursor:pointer;color:#ffd27a;font-weight:700;min-height:28px}
 details.lvl li.got{color:#9fe0a8}
 .legend{font-size:11px;font-weight:900;color:#2a1408;background:linear-gradient(#ffe9a0,#ffb040);padding:1px 6px;border-radius:6px;margin-left:6px;vertical-align:middle}
+.tog.vol{gap:10px}.tog.vol span{flex:none;min-width:70px}.tog.vol input{flex:1;accent-color:#f0c04a;height:32px;min-width:0}.tog.vol b{width:34px;text-align:right;color:#ffd27a}
 </style></head><body>
 <div id="app"></div><div id="fx"></div><div id="toast"></div>
 <script>
@@ -367,13 +368,14 @@ const ls={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==nul
 let S=null,B=null,M='title',MOD=null,busy=false,FX=[];
 
 /* ================= 소리: 배경음악 + 효과음 (모두 코드로 합성) ================= */
-const OPT=Object.assign({music:true,sfx:true},ls.get(OKEY,{}));
+const OPT=Object.assign({music:true,sfx:true,mv:70,sv:80},ls.get(OKEY,{}));
+const musVol=()=>OPT.music?.48*(OPT.mv/100):0,fxVol=()=>OPT.sfx?.75*(OPT.sv/100):0;
 const AU={ctx:null,track:null,want:null,next:0,step:0,timer:null,last:{},tr:0};
 const fq=m=>440*2**((m-69)/12),MV=.34;
 function auInit(){if(AU.ctx)return;try{const Cx=window.AudioContext||window.webkitAudioContext;if(!Cx)return;const c=AU.ctx=new Cx();
  const comp=c.createDynamicsCompressor();comp.threshold.value=-16;comp.knee.value=12;comp.ratio.value=4;comp.attack.value=.005;comp.release.value=.2;comp.connect(c.destination);
- AU.mus=c.createGain();AU.mus.gain.value=OPT.music?MV:0;AU.mus.connect(comp);
- AU.fx=c.createGain();AU.fx.gain.value=OPT.sfx?.55:0;AU.fx.connect(comp);
+ AU.mus=c.createGain();AU.mus.gain.value=musVol();AU.mus.connect(comp);
+ AU.fx=c.createGain();AU.fx.gain.value=fxVol();AU.fx.connect(comp);
  const len=Math.floor(c.sampleRate*2.6),ir=c.createBuffer(2,len,c.sampleRate);for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.8)}
  const rv=c.createConvolver();rv.buffer=ir;const rvIn=c.createGain();rvIn.gain.value=.3;rvIn.connect(rv);rv.connect(AU.mus);
  AU.bus=c.createGain();AU.bus.connect(AU.mus);AU.bus.connect(rvIn);
@@ -441,9 +443,9 @@ boss:{bpm:150,len:8,ch:[[52,55,59],[48,52,55],[50,54,57],[47,51,54]],play(t,s,ba
 function sched(){const c=AU.ctx,tr=TR[AU.track];if(!c||!tr||!OPT.music||c.state!=='running'){if(c)AU.next=c.currentTime+.05;return}
  const sp=60/tr.bpm/4;if(AU.next<c.currentTime)AU.next=c.currentTime+.03;
  while(AU.next<c.currentTime+.15){const bar=Math.floor(AU.step/16)%tr.len,s=AU.step%16;try{tr.play(AU.next,s,bar,sp)}catch(e){}AU.next+=sp;AU.step++}}
-function music(n){AU.want=n;if(AU.track===n)return;AU.track=n;AU.step=0;if(!AU.ctx)return;const t=AU.ctx.currentTime,g=AU.mus.gain;g.cancelScheduledValues(t);g.setValueAtTime(Math.max(g.value,.0001),t);g.linearRampToValueAtTime(.0001,t+.25);g.linearRampToValueAtTime(OPT.music?MV:0,t+1);AU.next=t+.3}
-function jingle(win){if(!AU.ctx||!OPT.sfx)return;AU.track=null;const t=AU.ctx.currentTime+.05,g=AU.mus.gain;g.cancelScheduledValues(t);g.setValueAtTime(OPT.music?MV:.25,t);
- const pv=OPT.music?1:1.3;
+function music(n){AU.want=n;if(AU.track===n)return;AU.track=n;AU.step=0;if(!AU.ctx)return;const t=AU.ctx.currentTime,g=AU.mus.gain;g.cancelScheduledValues(t);g.setValueAtTime(Math.max(g.value,.0001),t);g.linearRampToValueAtTime(.0001,t+.25);g.linearRampToValueAtTime(musVol(),t+1);AU.next=t+.3}
+function jingle(win){if(!AU.ctx||!OPT.sfx)return;AU.track=null;const t=AU.ctx.currentTime+.05,g=AU.mus.gain;g.cancelScheduledValues(t);g.setValueAtTime(Math.max(musVol(),.2),t);
+ const pv=1;
  if(win){[60,64,67,72].forEach((m,i)=>I('lead',t+i*.12,m+12,.3,.05*pv));[60,64,67,72].forEach(m=>I('pad',t+.5,m,2.4,.025*pv));I('bell',t+.5,84,2.4,.07*pv);I('bell',t+.8,88,2,.05*pv);D('crash',t+.5);D('kick',t+.5)}
  else{[64,62,60,57].forEach((m,i)=>I('flute',t+i*.4,m,.6,.06*pv));[45,48,52].forEach(m=>I('pad',t+1.6,m,2.6,.03*pv));I('bell',t+1.6,57,2.5,.05*pv)}}
 function sfx(n){if(!AU.ctx||!OPT.sfx)return;const c=AU.ctx,t=c.currentTime,f=AU.fx;if(AU.last[n]&&t-AU.last[n]<.045)return;AU.last[n]=t;
@@ -466,7 +468,10 @@ function sfx(n){if(!AU.ctx||!OPT.sfx)return;const c=AU.ctx,t=c.currentTime,f=AU.
  roar(){noise(f,t,.8,.3,400,'lowpass');tone(f,t,40,.8,'sawtooth',.12,.05,-5,500)}})[n]?.()}
 document.addEventListener('pointerdown',()=>{auInit();if(AU.ctx&&AU.ctx.state==='suspended')AU.ctx.resume()},{passive:true});
 document.addEventListener('visibilitychange',()=>{if(!AU.ctx)return;document.hidden?AU.ctx.suspend():AU.ctx.resume()});
-function setOpt(k){OPT[k]=!OPT[k];ls.set(OKEY,OPT);if(AU.ctx){const g=AU.mus.gain;g.cancelScheduledValues(AU.ctx.currentTime);g.value=OPT.music?MV:0;AU.fx.gain.value=OPT.sfx?.55:0}}
+function applyVol(){if(!AU.ctx)return;const g=AU.mus.gain;g.cancelScheduledValues(AU.ctx.currentTime);g.value=musVol();AU.fx.gain.value=fxVol()}
+document.addEventListener('input',e=>{const r=e.target.closest&&e.target.closest('input[data-v]');if(!r)return;const k=r.dataset.v,v=+r.value;OPT[k]=v||OPT[k];if(k==='mv')OPT.music=v>0;else OPT.sfx=v>0;if(v)OPT[k]=v;ls.set(OKEY,OPT);applyVol();const b=document.getElementById('v'+k);if(b)b.textContent=v});
+document.addEventListener('change',e=>{if(e.target.closest&&e.target.closest('input[data-v="sv"]'))sfx('coin')});
+function setOpt(k){OPT[k]=!OPT[k];ls.set(OKEY,OPT);if(AU.ctx){const g=AU.mus.gain;g.cancelScheduledValues(AU.ctx.currentTime);g.value=musVol();AU.fx.gain.value=fxVol()}}
 
 /* ================= 용사 · 스킨 · 성장 데이터 ================= */
 const MKEY='dragon-tower-meta';
@@ -1028,7 +1033,7 @@ function modalH(){if(!MOD)return'';const m=MOD.m;let title='',body='';
  else if(m==='dev'){title='개발자 메뉴';body=devH()}
  else if(m==='tutask'){title='환영해요!';body=`<div class="panel center"><div class="spr" style="width:120px">${heroSvg('knight','base')}</div><h2>용의 탑에 오신 걸 환영해요</h2><p class="soft">2분짜리 튜토리얼로 기본을 익히고 별조각 100개를 받으세요.</p><button class="btn big" data-a="tutstart">튜토리얼 시작</button><button class="btn ghost" data-a="tutskip">건너뛰기</button></div>`}
  else if(m==='tutdone'){title='튜토리얼 완료';body=`<div class="panel center"><span class="result-ban">완료!</span><p style="font-size:17px">별조각 <b class="gold">+100</b>을 받았어요.</p><div class="gl" style="text-align:left"><p><b>팁</b> 지도에서는 정예(해골)를 피하거나 노리며 길을 정해요.</p><p><b>팁</b> 휴식처에서는 회복하거나 카드를 강화할 수 있어요.</p><p><b>팁</b> 원정이 끝나면 별조각으로 영웅·스킨·성장을 강화해요.</p></div><button class="btn big" data-a="expsel">첫 원정 떠나기</button></div>`}
- else if(m==='opts'){title='설정';body=`<div class="tog"><span>배경음악</span><button class="btn ${OPT.music?'':'alt'}" data-a="tmusic">${OPT.music?'켜짐':'꺼짐'}</button></div><div class="tog"><span>효과음</span><button class="btn ${OPT.sfx?'':'alt'}" data-a="tsfx">${OPT.sfx?'켜짐':'꺼짐'}</button></div><div class="tog"><span>적 턴 2배속</span><button class="btn ${OPT.fast?'':'alt'}" data-a="spd">${OPT.fast?'켜짐':'꺼짐'}</button></div>${!S?'<div class="tog"><span>튜토리얼 다시 하기</span><button class="btn alt" data-a="tutstart">시작</button></div>':''}${META.dev&&DEV_BUILD?'<div class="tog"><span>개발자 메뉴</span><button class="btn alt" data-a="devm">열기</button></div>':''}${S&&!S.done?`<div class="tog"><span>이번 원정 포기 (별조각은 받아요)</span><button class="btn alt" data-a="abandon">${MOD.sure?'정말 포기':'포기하기'}</button></div>`:''}`}
+ else if(m==='opts'){title='설정';body=`<div class="tog vol"><span>배경음악</span><input type="range" min="0" max="100" step="5" value="${OPT.music?OPT.mv:0}" data-v="mv" aria-label="배경음악 음량"><b id="vmv">${OPT.music?OPT.mv:0}</b></div><div class="tog vol"><span>효과음</span><input type="range" min="0" max="100" step="5" value="${OPT.sfx?OPT.sv:0}" data-v="sv" aria-label="효과음 음량"><b id="vsv">${OPT.sfx?OPT.sv:0}</b></div><div class="tog"><span>적 턴 2배속</span><button class="btn ${OPT.fast?'':'alt'}" data-a="spd">${OPT.fast?'켜짐':'꺼짐'}</button></div>${!S?'<div class="tog"><span>튜토리얼 다시 하기</span><button class="btn alt" data-a="tutstart">시작</button></div>':''}${META.dev&&DEV_BUILD?'<div class="tog"><span>개발자 메뉴</span><button class="btn alt" data-a="devm">열기</button></div>':''}${S&&!S.done?`<div class="tog"><span>이번 원정 포기 (별조각은 받아요)</span><button class="btn alt" data-a="abandon">${MOD.sure?'정말 포기':'포기하기'}</button></div>`:''}`}
  return `<div class="modal"><div class="in"><div class="mh"><h2 style="font-size:24px">${title}</h2><button class="btn alt" data-a="mclose">닫기</button></div>${body}</div></div>`}
 let dailyShown=false;
 let tutAsked=false;
@@ -1370,6 +1375,6 @@ Object.assign(A,DEVA,V7A,V8A,V9A);
 document.addEventListener('click',e=>{if(dragJust)return;const t=e.target.closest('[data-a]');if(!t||t.disabled)return;const f=A[t.dataset.a];if(f)f(+t.dataset.i)});
 document.addEventListener('keydown',e=>{if(S&&S.scr==='battle'&&!MOD){if(e.key==='e'||e.key==='E')endTurn();const n=+e.key;if(n>=1&&n<=9)play(n-1)}});
 render();
-try{if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+try{if('serviceWorker' in navigator&&location.protocol==='https:'&&!window.Capacitor)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 }
 </script></body></html>
