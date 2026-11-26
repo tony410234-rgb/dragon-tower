@@ -9,6 +9,8 @@ jobs:
     env:
       APP_ID: com.tony410234.dragontower
       APP_NAME: 용의 탑
+      # 게임이 올라가 있는 GitHub Pages 주소 (앱이 실행될 때마다 여기서 최신 게임을 불러와요)
+      GAME_URL: https://tony410234-rgb.github.io/dragon-tower/
     steps:
       - uses: actions/checkout@v4
 
@@ -25,13 +27,20 @@ jobs:
         run: |
           mkdir -p cap/www
           cp index.html manifest.json sw.js icon-*.png cap/www/
+          cat > cap/www/offline.html <<'HTML'
+          <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+          <style>body{margin:0;height:100vh;display:grid;place-items:center;background:#140a10;color:#f3e6cc;font-family:sans-serif;text-align:center}button{margin-top:18px;padding:14px 28px;border-radius:12px;border:0;background:#e0603a;color:#fff;font-size:17px;font-weight:700}</style></head>
+          <body><div><h2>인터넷 연결이 필요해요</h2><p>처음 실행할 때 한 번만 연결하면<br>그다음부터는 오프라인에서도 할 수 있어요.</p><button onclick="location.href='${GAME_URL}'">다시 시도</button></div></body></html>
+          HTML
+          sed -i "s#\${GAME_URL}#$GAME_URL#" cap/www/offline.html
 
       - name: Capacitor 안드로이드 프로젝트 만들기
         working-directory: cap
         run: |
           npm init -y >/dev/null
-          npm i @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8
+          npm i @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8 @capacitor/app@8
           npx cap init "$APP_NAME" "$APP_ID" --web-dir www
+          node -e "const f='capacitor.config.json',c=JSON.parse(require('fs').readFileSync(f));c.server={url:process.env.GAME_URL,errorPath:'offline.html'};require('fs').writeFileSync(f,JSON.stringify(c,null,2));console.log(c)"
           npx cap add android
           npx cap sync android
 
@@ -44,6 +53,52 @@ jobs:
           grep -E "versionCode|versionName" app/build.gradle
           grep -E "compileSdk|targetSdk|minSdk" variables.gradle
 
+      - name: 전체 화면 (상태바·내비게이션바 숨기기)
+        run: |
+          F=$(find cap/android/app/src/main/java -name MainActivity.java)
+          PKG=$(head -1 "$F")
+          cat > "$F" <<JAVA
+          $PKG
+
+          import android.os.Bundle;
+          import android.view.View;
+          import androidx.core.graphics.Insets;
+          import androidx.core.view.ViewCompat;
+          import androidx.core.view.WindowCompat;
+          import androidx.core.view.WindowInsetsCompat;
+          import androidx.core.view.WindowInsetsControllerCompat;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  getWindow().getDecorView().setBackgroundColor(0xFF140A10);
+                  WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+                  View root = findViewById(android.R.id.content);
+                  ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+                      Insets cut = insets.getInsets(WindowInsetsCompat.Type.displayCutout());
+                      v.setPadding(cut.left, cut.top, cut.right, cut.bottom);
+                      return WindowInsetsCompat.CONSUMED;
+                  });
+                  hideBars();
+              }
+
+              @Override
+              public void onWindowFocusChanged(boolean hasFocus) {
+                  super.onWindowFocusChanged(hasFocus);
+                  if (hasFocus) hideBars();
+              }
+
+              private void hideBars() {
+                  WindowInsetsControllerCompat c = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+                  c.hide(WindowInsetsCompat.Type.systemBars());
+                  c.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+              }
+          }
+          JAVA
+          cat "$F"
+
       - name: 앱 아이콘 / 시작 화면 만들기
         run: |
           pip install --quiet pillow
@@ -53,6 +108,7 @@ jobs:
           res = 'cap/android/app/src/main/res'
           icon = Image.open('icon-512.png').convert('RGBA')
           mask = Image.open('icon-maskable-512.png').convert('RGBA')
+          bg = (74, 34, 48, 255)
           legacy = {'mdpi': 48, 'hdpi': 72, 'xhdpi': 96, 'xxhdpi': 144, 'xxxhdpi': 192}
           for d, s in legacy.items():
               folder = f'{res}/mipmap-{d}'
