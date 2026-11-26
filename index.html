@@ -354,6 +354,8 @@ details.lvl{font-size:13px;color:var(--soft)}details.lvl summary{cursor:pointer;
 details.lvl li.got{color:#9fe0a8}
 .legend{font-size:11px;font-weight:900;color:#2a1408;background:linear-gradient(#ffe9a0,#ffb040);padding:1px 6px;border-radius:6px;margin-left:6px;vertical-align:middle}
 .tog.vol{gap:10px}.tog.vol span{flex:none;min-width:70px}.tog.vol input{flex:1;accent-color:#f0c04a;height:32px;min-width:0}.tog.vol b{width:34px;text-align:right;color:#ffd27a}
+.swl{display:flex;flex-direction:column;gap:8px}.swr{display:flex;align-items:center;gap:12px;width:100%;padding:10px 14px;border-radius:12px;background:rgba(0,0,0,.3);border:1.5px solid #9a7224;color:#f3e6cc;text-align:left;font:inherit}.swr span{flex:1;display:flex;flex-direction:column}.swr small{opacity:.75}.swr em{font-style:normal;font-weight:900;color:#ffd27a}.swr:active{transform:scale(.98)}
+.potm h2{margin:6px 0 2px}.potbig{width:110px;height:110px;margin:0 auto;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle,rgba(255,220,140,.25),transparent 70%)}.potd{font-size:19px;color:#ffd27a;margin:4px 0 10px}.potbtn{display:flex;gap:10px;justify-content:center;margin-top:12px}.potbtn .btn{flex:none}.btn[disabled]{opacity:.45;filter:grayscale(.6)}
 </style></head><body>
 <div id="app"></div><div id="fx"></div><div id="toast"></div>
 <script>
@@ -467,6 +469,12 @@ function sfx(n){if(!AU.ctx||!OPT.sfx)return;const c=AU.ctx,t=c.currentTime,f=AU.
  win(){[67,72,76,79].forEach((m,i)=>tone(f,t+i*.08,m,.25,'square',.05,.005,0,3000))},
  roar(){noise(f,t,.8,.3,400,'lowpass');tone(f,t,40,.8,'sawtooth',.12,.05,-5,500)}})[n]?.()}
 document.addEventListener('pointerdown',()=>{auInit();if(AU.ctx&&AU.ctx.state==='suspended')AU.ctx.resume()},{passive:true});
+function onBack(){if(DG&&DG.on){dragEnd(null,false);return}
+ if(MOD){if(MOD.m==='potswap')return A.potskip();if(MOD.m==='tutask'||MOD.m==='daily'||MOD.m==='exit'||MOD.m==='opts'||MOD.m==='pot'||MOD.m==='view'||MOD.m==='pile'||MOD.m==='help'||MOD.m==='dev'||MOD.m==='tutdone'){MOD=null;render();return}return A.mclose()}
+ if(S){if(S.done)return A.title();MOD={m:'opts'};render();return}
+ if(M!=='title'){M='title';render();return}
+ MOD={m:'exit'};render()}
+try{const CP=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.App;if(CP){CP.addListener('backButton',onBack);CP.addListener('appStateChange',st=>{if(!AU.ctx)return;st.isActive?AU.ctx.resume():AU.ctx.suspend()})}}catch(e){}
 document.addEventListener('visibilitychange',()=>{if(!AU.ctx)return;document.hidden?AU.ctx.suspend():AU.ctx.resume()});
 function applyVol(){if(!AU.ctx)return;const g=AU.mus.gain;g.cancelScheduledValues(AU.ctx.currentTime);g.value=musVol();AU.fx.gain.value=fxVol()}
 document.addEventListener('input',e=>{const r=e.target.closest&&e.target.closest('input[data-v]');if(!r)return;const k=r.dataset.v,v=+r.value;OPT[k]=v||OPT[k];if(k==='mv')OPT.music=v>0;else OPT.sfx=v>0;if(v)OPT[k]=v;ls.set(OKEY,OPT);applyVol();const b=document.getElementById('v'+k);if(b)b.textContent=v});
@@ -477,13 +485,13 @@ function setOpt(k){OPT[k]=!OPT[k];ls.set(OKEY,OPT);if(AU.ctx){const g=AU.mus.gai
 const MKEY='dragon-tower-meta';
 const META=Object.assign({shards:0,sel:'knight',unlocked:['knight','mage','rogue'],owned:[],skin:{},up:{},cnt:{},claimed:[],daily:'',streak:0,items:{},frag:0,clears:{},asc:{},ascSel:{},hxp:{}},ls.get(MKEY,{}));
 const saveMeta=()=>ls.set(MKEY,META);
-const cntAdd=(k,n)=>{META.cnt[k]=(META.cnt[k]||0)+n};
+const cntAdd=(k,n)=>{META.cnt[k]=(META.cnt[k]||0)+n;dqAdd(k,n)};
 const cntMax=(k,n)=>{if(n>(META.cnt[k]||0))META.cnt[k]=n};
 const H={
-knight:{n:'성기사 에단',sub:'방패와 반격',hp:86,maxM:2,regen:1,drawN:5,tags:['체력 86','마나 2','손패 5'],p:'전투를 방어도 10으로 시작해요. 방어도를 쌓아 버티다가 방패 강타로 되갚아 줍니다.',deck:{slash:4,guard:4,bash:1,prayer:1},skins:[['base','기본',0],['dark','흑기사',700,{str:1}],['sun','태양의 성기사',1200,{hp:10,blk:5}],['myth','용기사',0,{hp:10,str:1,blk:6},1]]},
-mage:{n:'대마법사 리아',sub:'강력한 주문',hp:66,maxM:4,regen:2,drawN:5,tags:['체력 66','마나 4','손패 5'],p:'마나가 많고 매 턴 2씩 차올라요. 몸은 약하지만 주문 한 방이 큽니다.',deck:{staff:3,fire:2,guard:3,ward:1,med:1},skins:[['base','기본',0],['flame','불꽃술사',700,{mana:1}],['frost','서리마녀',1200,{mana:1,hp:5}],['myth','시간의 대현자',0,{mana:1,draw1:2,hp:8},1]]},
-rogue:{n:'그림자 도적 카이',sub:'출혈과 연속 공격',hp:60,maxM:0,regen:0,drawN:6,tags:['체력 60','마나 없음','손패 6'],p:'매 턴 카드를 6장 뽑고, 출혈을 걸 때마다 1씩 더 겁니다. 출혈을 쌓아 한 번에 터뜨리세요.',deck:{stab:4,guard:4,dodge:1,thorn:1},skins:[['base','기본',0],['crimson','붉은 그림자',700,{gold:40}],['cat','밤고양이',1200,{draw1:2,hp:5}],['myth','그림자 군주',0,{str:1,draw1:1,hp:8},1]]},
-berserker:{n:'광전사 브론',sub:'피와 분노',hp:92,maxM:0,regen:0,drawN:5,tags:['체력 92','마나 없음','손패 5'],p:'체력이 절반 이하가 되면 힘 +3. 자기 체력을 깎아 더 큰 힘을 냅니다.',deck:{chop:4,guard:4,bloodhit:1,warcry:1},lock:400,skins:[['base','기본',0],['bone','해골 족장',700,{hp:8}],['storm','폭풍 전사',1200,{str:1,hp:5}],['myth','불멸의 전쟁군주',0,{hp:15,str:1},1]]}
+knight:{n:'성기사 에단',sub:'방패와 반격',hp:86,maxM:2,regen:1,drawN:5,tags:['체력 86','마나 2','손패 5'],p:'전투를 방어도 10으로 시작해요. 방어도를 쌓아 버티다가 방패 강타로 되갚아 줍니다.',deck:{slash:4,guard:4,bash:1,prayer:1},skins:[['base','기본',0],['dark','흑기사',1000,{str:1}],['sun','태양의 성기사',1800,{hp:10,blk:5}],['myth','용기사',0,{hp:10,str:1,blk:6},1]]},
+mage:{n:'대마법사 리아',sub:'강력한 주문',hp:66,maxM:4,regen:2,drawN:5,tags:['체력 66','마나 4','손패 5'],p:'마나가 많고 매 턴 2씩 차올라요. 몸은 약하지만 주문 한 방이 큽니다.',deck:{staff:3,fire:2,guard:3,ward:1,med:1},skins:[['base','기본',0],['flame','불꽃술사',1000,{mana:1}],['frost','서리마녀',1800,{mana:1,hp:5}],['myth','시간의 대현자',0,{mana:1,draw1:2,hp:8},1]]},
+rogue:{n:'그림자 도적 카이',sub:'출혈과 연속 공격',hp:60,maxM:0,regen:0,drawN:6,tags:['체력 60','마나 없음','손패 6'],p:'매 턴 카드를 6장 뽑고, 출혈을 걸 때마다 1씩 더 겁니다. 출혈을 쌓아 한 번에 터뜨리세요.',deck:{stab:4,guard:4,dodge:1,thorn:1},skins:[['base','기본',0],['crimson','붉은 그림자',1000,{gold:40}],['cat','밤고양이',1800,{draw1:2,hp:5}],['myth','그림자 군주',0,{str:1,draw1:1,hp:8},1]]},
+berserker:{n:'광전사 브론',sub:'피와 분노',hp:92,maxM:0,regen:0,drawN:5,tags:['체력 92','마나 없음','손패 5'],p:'체력이 절반 이하가 되면 힘 +3. 자기 체력을 깎아 더 큰 힘을 냅니다.',deck:{chop:4,guard:4,bloodhit:1,warcry:1},lock:400,skins:[['base','기본',0],['bone','해골 족장',1000,{hp:8}],['storm','폭풍 전사',1800,{str:1,hp:5}],['myth','불멸의 전쟁군주',0,{hp:15,str:1},1]]}
 };
 const HK=['knight','mage','rogue','berserker'];
 const PAL={
@@ -510,27 +518,32 @@ const GROW=[
 {k:'relic',n:'행운의 출발',d:l=>l?'원정 시작 시 무작위 유물 1개':'원정 시작 시 무작위 유물을 하나 들고 가요',max:1,cost:[300]}
 ];
 const ACH=[
-{id:'run1',n:'첫 발걸음',d:'원정 1번 끝내기',k:'runs',g:1,r:30},
-{id:'run10',n:'단골 원정대',d:'원정 10번 끝내기',k:'runs',g:10,r:120},
-{id:'floor8',n:'첫 관문',d:'1막 8층 이상 도달',k:'maxFloor',g:8,r:60},
-{id:'act2',n:'망자의 회랑',d:'2막 도달',k:'maxFloor',g:14,r:100},
-{id:'act3',n:'용의 둥지',d:'3막 도달',k:'maxFloor',g:27,r:160},
-{id:'bossk',n:'보스 사냥꾼',d:'보스 3마리 처치',k:'bosses',g:3,r:120},
-{id:'kill50',n:'괴물 사냥꾼',d:'적 50마리 처치',k:'kills',g:50,r:80},
-{id:'kill200',n:'백전노장',d:'적 200마리 처치',k:'kills',g:200,r:200},
-{id:'elite5',n:'정예 사냥꾼',d:'정예 5마리 처치',k:'elites',g:5,r:80},
-{id:'boss1',n:'탑의 정점',d:'3막 보스 처치',k:'dragons',g:1,r:300},
-{id:'up10',n:'대장장이의 친구',d:'카드 10장 강화',k:'ups',g:10,r:60},
-{id:'rel5',n:'수집가',d:'한 원정에서 유물 5개 모으기',k:'maxRel',g:5,r:100},
-{id:'clear1',n:'첫 정복',d:'아무 맵이나 클리어',k:'clears',g:1,r:100,fr:3},
-{id:'clear5',n:'정복자',d:'맵 5번 클리어',k:'clears',g:5,r:300,fr:5},
-{id:'hard',n:'심연을 본 자',d:'★4 이상 맵 클리어',k:'hardclear',g:1,r:400,fr:8},
-{id:'rich',n:'금화 부자',d:'한 원정에서 금화 300개 모으기',k:'maxGold',g:300,r:80}
+{id:'run1',n:'첫 발걸음',d:'원정 1번 끝내기',k:'runs',g:1,r:15},
+{id:'run10',n:'단골 원정대',d:'원정 10번 끝내기',k:'runs',g:10,r:55},
+{id:'floor8',n:'첫 관문',d:'1막 8층 이상 도달',k:'maxFloor',g:8,r:25},
+{id:'act2',n:'망자의 회랑',d:'2막 도달',k:'maxFloor',g:14,r:45},
+{id:'act3',n:'용의 둥지',d:'3막 도달',k:'maxFloor',g:27,r:70},
+{id:'bossk',n:'보스 사냥꾼',d:'보스 3마리 처치',k:'bosses',g:3,r:55},
+{id:'kill50',n:'괴물 사냥꾼',d:'적 50마리 처치',k:'kills',g:50,r:35},
+{id:'kill200',n:'백전노장',d:'적 200마리 처치',k:'kills',g:200,r:90},
+{id:'elite5',n:'정예 사냥꾼',d:'정예 5마리 처치',k:'elites',g:5,r:35},
+{id:'boss1',n:'탑의 정점',d:'3막 보스 처치',k:'dragons',g:1,r:135},
+{id:'up10',n:'대장장이의 친구',d:'카드 10장 강화',k:'ups',g:10,r:25},
+{id:'rel5',n:'수집가',d:'한 원정에서 유물 5개 모으기',k:'maxRel',g:5,r:45},
+{id:'clear1',n:'첫 정복',d:'아무 맵이나 클리어',k:'clears',g:1,r:45,fr:3},
+{id:'clear5',n:'정복자',d:'맵 5번 클리어',k:'clears',g:5,r:135,fr:5},
+{id:'hard',n:'심연을 본 자',d:'★4 이상 맵 클리어',k:'hardclear',g:1,r:180,fr:8},
+{id:'rich',n:'금화 부자',d:'한 원정에서 금화 300개 모으기',k:'maxGold',g:300,r:35}
 ];
-const achReady=()=>ACH.filter(a=>!META.claimed.includes(a.id)&&(META.cnt[a.k]||0)>=a.g).length;
+const DQP=[{k:'kills',g:15,d:'적 15마리 처치'},{k:'elites',g:2,d:'정예 2마리 처치'},{k:'bosses',g:1,d:'보스 1마리 처치'},{k:'runs',g:2,d:'원정 2번 끝내기'},{k:'ups',g:3,d:'카드 3장 강화'},{k:'pots',g:2,d:'물약 2개 사용'},{k:'plays',g:60,d:'카드 60장 사용'}];
+const DQ_R=15,DQ_ALL=20;
+function dqCur(){const t=today();if(!META.dq||META.dq.d!==t){let h=0;for(const ch of t)h=(h*31+ch.charCodeAt(0))>>>0;const idx=[...DQP.keys()],ids=[];while(ids.length<3){h=(h*1103515245+12345)>>>0;const j=h%idx.length;ids.push(idx.splice(j,1)[0])}META.dq={d:t,ids,c:{},cl:[],all:0}}return META.dq}
+function dqAdd(k,n){if(typeof today!=='function')return;const q=dqCur();if(q.ids.some(i=>DQP[i].k===k))q.c[k]=(q.c[k]||0)+n}
+const dqReady=()=>{const q=dqCur();return q.ids.filter((i,j)=>!q.cl.includes(j)&&(q.c[DQP[i].k]||0)>=DQP[i].g).length+(q.cl.length===3&&!q.all?1:0)};
+const achReady=()=>ACH.filter(a=>!META.claimed.includes(a.id)&&(META.cnt[a.k]||0)>=a.g).length+dqReady();
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
 const yday=()=>{const d=new Date(Date.now()-864e5);return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
-const dailyAmt=()=>{const s=META.daily===yday()?META.streak+1:1;return{s,amt:20+Math.min(s,7)*5}};
+const dailyAmt=()=>{const s=META.daily===yday()?META.streak+1:1;return{s,amt:10+Math.min(s,7)*3}};
 
 /* ================= 카드 ================= */
 const TL={atk:'근접',mag:'마법',def:'방어',skl:'기술'};
@@ -891,7 +904,7 @@ function play(i){if(busy||MOD)return;const c=B.hand[i];if(!c)return;const d=C[c.
  if(S.tut!=null&&TUT[S.tut]){const st=TUT[S.tut];if(st.tap||(st.need&&st.need!==c.id)){sfx('err');return toast(st.need==='end'?'「턴 종료」를 눌러 보세요':st.need?'안내된 카드를 써 보세요':'「확인」을 눌러 주세요')}}
  if(B.energy<cost(c)){sfx('err');return toast('행동력이 부족해요')}
  if(B.mana<(d.a||0)||(d.xa&&B.mana<1)){sfx('err');return toast(S.hero==='mage'?'마나가 부족해요 — 명상!':'마나가 부족해요')}
- flyCard(i);B.energy-=cost(c);B.mana-=d.a||0;B.hand.splice(i,1);
+ flyCard(i);if(S.tut==null)cntAdd('plays',1);B.energy-=cost(c);B.mana-=d.a||0;B.hand.splice(i,1);
  B.bon=(d.t==='atk'&&has('whet')?2:0)+(d.t==='mag'&&has('mark')?3:0);
  B.vk=VK[c.id]||(d.t==='mag'?'orb':'slash');B.vc=VC[c.id]||(d.t==='mag'?'#7ff0e4':heroFx(S.hero));
  sfx(d.t==='atk'?'slash':d.t==='mag'?'magic':d.t==='def'?'block':'card');
@@ -925,8 +938,8 @@ function win(){busy=false;if(!B)return;if(S.tut!=null){B=null;META.tut=1;META.sh
  S.rw={kind:t,gold:g,relic:rel,pot:t==='elite'||Math.random()<.4?pick(PK):null,cards:rollCards(3+(META.up.choice?1:0),t==='elite'||XP().st>=4?'elite':'norm'),title:t==='elite'?'정예 격파!':'승리!'};S.scr='reward';save();saveMeta();render()}
 function lose(){busy=false;if(B)S.hp=0;endRun(false);S.scr='lose';jingle(false);render()}
 function endRun(won){if(S.done)return;S.done=1;const X=XP(),fl=won?NA()*13:totFl(),k=S.k;
- const lines=[[`도달 · ${flTxt(fl)}`,fl*3],[`처치한 적 · ${k.n}마리`,k.n*2],[`정예 처치 · ${k.e}마리`,k.e*15]];if(k.b)lines.push([`보스 처치 · ${k.b}마리`,k.b*40]);if(won)lines.push(['탑 정복!',150]);
- let tot=lines.reduce((a,b)=>a+b[1],0);{const mult=X.rw*(1+.1*(S.asc||0))*(S.drw||1);if(mult!==1){const bon=Math.round(tot*(mult-1));lines.push([`보상 배율 ×${+mult.toFixed(2)}`,bon]);tot+=bon}}META.shards+=tot;let fr=k.f||0;if(won){const first=!(META.clears[S.exp]>0),g=X.fr*(first?2:1);META.frag=(META.frag||0)+g;fr+=g;META.clears[S.exp]=(META.clears[S.exp]||0)+1;cntAdd('clears',1);if(X.st>=4)cntAdd('hardclear',1);S.first=first;const af=Math.floor((S.asc||0)/3);META.frag+=af;fr+=af;if(!S.daily){const cur=META.asc[S.exp]||0;if((S.asc||0)>=cur&&cur<10){META.asc[S.exp]=(S.asc||0)+1;S.ascUp=META.asc[S.exp]}}}if(S.daily){if(!META.dbest||META.dbest.d!==S.daily||META.dbest.f<fl)META.dbest={d:S.daily,f:fl};if(won&&META.dwin!==S.daily){META.dwin=S.daily;META.frag=(META.frag||0)+5;fr+=5;META.shards+=300;tot+=300;lines.push(['일일 도전 첫 클리어!',300])}}cntAdd('runs',1);cntMax('maxFloor',fl);saveMeta();{const xp=Math.round((fl*8+k.n*3+k.e*15+(k.b||0)*40+(won?150:0))*(1+.1*(S.asc||0))),lb=hlv(S.hero).l;META.hxp=META.hxp||{};META.hxp[S.hero]=(META.hxp[S.hero]||0)+xp;const la=hlv(S.hero).l;if(la>lb){META.shards+=30*(la-lb);tot+=30*(la-lb);lines.push(['레벨 업 보상',30*(la-lb)]);if(la>=10&&lb<10){META.frag=(META.frag||0)+10;fr+=10}}S.xpr={xp,lb,la};saveMeta()}S.res={lines,tot,fr};stat(won);ls.del(KEY)}
+ const lines=[[`도달 · ${flTxt(fl)}`,fl],[`처치한 적 · ${k.n}마리`,k.n],[`정예 처치 · ${k.e}마리`,k.e*6]];if(k.b)lines.push([`보스 처치 · ${k.b}마리`,k.b*15]);if(won)lines.push(['탑 정복!',60]);
+ let tot=lines.reduce((a,b)=>a+b[1],0);{const mult=X.rw*(1+.1*(S.asc||0))*(S.drw||1);if(mult!==1){const bon=Math.round(tot*(mult-1));lines.push([`보상 배율 ×${+mult.toFixed(2)}`,bon]);tot+=bon}}META.shards+=tot;let fr=k.f||0;if(won){const first=!(META.clears[S.exp]>0),g=X.fr*(first?2:1);META.frag=(META.frag||0)+g;fr+=g;META.clears[S.exp]=(META.clears[S.exp]||0)+1;cntAdd('clears',1);if(X.st>=4)cntAdd('hardclear',1);S.first=first;const af=Math.floor((S.asc||0)/3);META.frag+=af;fr+=af;if(!S.daily){const cur=META.asc[S.exp]||0;if((S.asc||0)>=cur&&cur<10){META.asc[S.exp]=(S.asc||0)+1;S.ascUp=META.asc[S.exp]}}}if(S.daily){if(!META.dbest||META.dbest.d!==S.daily||META.dbest.f<fl)META.dbest={d:S.daily,f:fl};if(won&&META.dwin!==S.daily){META.dwin=S.daily;META.frag=(META.frag||0)+5;fr+=5;META.shards+=120;tot+=120;lines.push(['일일 도전 첫 클리어!',120])}}cntAdd('runs',1);cntMax('maxFloor',fl);saveMeta();{const xp=Math.round((fl*8+k.n*3+k.e*15+(k.b||0)*40+(won?150:0))*(1+.1*(S.asc||0))),lb=hlv(S.hero).l;META.hxp=META.hxp||{};META.hxp[S.hero]=(META.hxp[S.hero]||0)+xp;const la=hlv(S.hero).l;if(la>lb){META.shards+=30*(la-lb);tot+=30*(la-lb);lines.push(['레벨 업 보상',30*(la-lb)]);if(la>=10&&lb<10){META.frag=(META.frag||0)+10;fr+=10}}S.xpr={xp,lb,la};saveMeta()}S.res={lines,tot,fr};stat(won);ls.del(KEY)}
 function buzz(ms){try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
 
 /* ================= 연출 (공격 이펙트) ================= */
@@ -1002,7 +1015,7 @@ heroes(){const st=ls.get(SKEY,{win:{},best:{}});return `<div class="bar lobby"><
  ${un?`<button class="btn ${sel?'alt':''}" data-a="sel" data-i="${i}" ${sel?'disabled':''}>${sel?'출전 중':'이 용사로 출전'}</button>`:`<button class="btn" data-a="unlock" data-i="${i}" ${META.shards<h.lock?'disabled':''}>해금 · 별조각 ${h.lock}</button>`}
  <div class="skins">${h.skins.map(([id,n,p,b,my],j)=>{const own=id==='base'||META.owned.includes(k+':'+id),on=skinOf(k)===id;return `<button class="sk ${on?'on':''} ${my?'myth':''}" data-a="skin" data-i="${i*10+j}" ${!un?'disabled':''}>${my?'<span class="mythtag">신화</span>':''}<div class="spr">${heroSvg(k,id)}</div><b>${n}</b><small class="sb">${bonusTxt(b)||'옵션 없음'}</small><span>${on?'장착 중':own?'장착하기':my?`${ICO.frag}${MYTH_COST}`:`${ICO.shard}${p}`}</span></button>`}).join('')}</div></div>`}).join('')}</div>`},
 growth(){return `<div class="bar lobby"><button class="btn ghost" data-a="title">← 로비</button><span style="flex:1"></span>${shardH(META.shards)}${fragH(META.frag||0)}</div><div class="wrap"><h2>성장</h2><p class="soft">한 번 강화하면 모든 용사의 모든 원정에 계속 적용돼요.</p>${GROW.map((g,i)=>{const l=META.up[g.k]||0,mx=l>=g.max,c=g.cost[l];return `<div class="panel grow"><div style="flex:1"><b>${g.n}</b> <span class="lv">Lv ${l}/${g.max}</span><p class="soft">${l?g.d(l):'아직 강화하지 않았어요'}</p>${mx?'':`<p style="font-size:14px">다음: ${g.d(l+1)}</p>`}<div class="pips">${[...Array(g.max)].map((_,j)=>`<i class="${j<l?'on':''}"></i>`).join('')}</div></div><button class="btn ${mx?'alt':''}" data-a="grow" data-i="${i}" ${mx||META.shards<c?'disabled':''}>${mx?'최대':`${ICO.shard}${c}`}</button></div>`}).join('')}</div>`},
-quests(){return `<div class="bar lobby"><button class="btn ghost" data-a="title">← 로비</button><span style="flex:1"></span>${shardH(META.shards)}${fragH(META.frag||0)}</div><div class="wrap"><h2>임무</h2>${ACH.map((a,i)=>{const v=Math.min(META.cnt[a.k]||0,a.g),done=v>=a.g,got=META.claimed.includes(a.id);return `<div class="panel grow ${got?'sold':''}"><div style="flex:1"><b>${a.n}</b><p class="soft">${a.d}</p><div class="pbar"><i style="width:${v/a.g*100}%"></i><span>${v}/${a.g}</span></div></div><button class="btn ${done&&!got?'':'alt'}" data-a="claim" data-i="${i}" ${!done||got?'disabled':''}>${got?'완료':`${ICO.shard}${a.r}${a.fr?` ${ICO.frag}${a.fr}`:''}`}</button></div>`}).join('')}</div>`},
+quests(){return `<div class="bar lobby"><button class="btn ghost" data-a="title">← 로비</button><span style="flex:1"></span>${shardH(META.shards)}${fragH(META.frag||0)}</div><div class="wrap"><h2>오늘의 임무</h2><p class="soft" style="margin-top:-6px">매일 자정에 바뀌어요 · 3개 모두 완료하면 신화 조각 1개 추가</p>${(()=>{const q=dqCur();return q.ids.map((di,j)=>{const a=DQP[di],v=Math.min(q.c[a.k]||0,a.g),done=v>=a.g,got=q.cl.includes(j);return `<div class="panel grow ${got?'sold':''}"><div style="flex:1"><b>${a.d}</b><div class="pbar"><i style="width:${v/a.g*100}%"></i><span>${v}/${a.g}</span></div></div><button class="btn ${done&&!got?'':'alt'}" data-a="dqclaim" data-i="${j}" ${!done||got?'disabled':''}>${got?'완료':`${ICO.shard}${DQ_R}`}</button></div>`}).join('')+`<div class="panel grow ${q.all?'sold':''}"><div style="flex:1"><b>오늘의 임무 모두 완료</b><div class="pbar"><i style="width:${q.cl.length/3*100}%"></i><span>${q.cl.length}/3</span></div></div><button class="btn ${q.cl.length===3&&!q.all?'':'alt'}" data-a="dqall" ${q.cl.length<3||q.all?'disabled':''}>${q.all?'완료':`${ICO.shard}${DQ_ALL} ${ICO.frag}1`}</button></div>`})()}<h2 style="margin-top:22px">업적</h2>${ACH.map((a,i)=>{const v=Math.min(META.cnt[a.k]||0,a.g),done=v>=a.g,got=META.claimed.includes(a.id);return `<div class="panel grow ${got?'sold':''}"><div style="flex:1"><b>${a.n}</b><p class="soft">${a.d}</p><div class="pbar"><i style="width:${v/a.g*100}%"></i><span>${v}/${a.g}</span></div></div><button class="btn ${done&&!got?'':'alt'}" data-a="claim" data-i="${i}" ${!done||got?'disabled':''}>${got?'완료':`${ICO.shard}${a.r}${a.fr?` ${ICO.frag}${a.fr}`:''}`}</button></div>`}).join('')}</div>`},
 map(){const rows=S.map.length,gap=82,H0=60+(rows-1)*gap+50,xy=(r,x)=>[r===rows-1?50:12+x.c*(76/3)+x.j,60+(rows-1-r)*gap];
  let lines='',nodes='';S.map.forEach((row,r)=>row.forEach((x,i)=>{const[a,b]=xy(r,x);x.n.forEach(ni=>{const y=S.map[r+1][ni],[c,d]=xy(r+1,y),walked=S.path[r]===i&&S.path[r+1]===ni,next=r===S.floor-1&&S.pos===i;lines+=`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${walked?'#f0c04a':next?'#fff3d6':'rgba(245,236,217,.28)'}" stroke-width="${walked||next?4:2.5}" stroke-linecap="round" ${walked?'':'stroke-dasharray="5 6"'} vector-effect="non-scaling-stroke"/>`});
   const can=r===S.floor&&canGo(i),went=S.path[r]===i;nodes+=`<button class="node n-${x.t} ${can?'can':went?'went':'off'}" style="left:${a}%;top:${b}px" ${can?`data-a="node" data-i="${i}"`:'disabled'} ${can&&!nodes.includes('id="go"')?'id="go"':''} aria-label="${r+1}층 ${NL[x.t]}"><span class="ni">${x.t==='boss'?SP[AR().boss]:NI[x.t]}</span><small>${x.t==='boss'?E[AR().boss].n:NL[x.t]}</small></button>`}));
@@ -1012,10 +1025,10 @@ battle(){const p=B.p,deal=B.deal;B.deal=0;return topBar()+`<div class="field ${A
 <div class="foes">${B.en.map((e,i)=>{let cls='';if(e.hp<=0){cls=e.fade?'gone':'dying';e.fade=1}return `<button class="ent foe ${i===B.tgt&&e.hp>0?'sel':''} ${e.k==='dragon'?'boss':''} ${cls}" id="${e.id}" data-a="tgt" data-i="${i}">${e.hp>0?intH(e):'<div class="int"></div>'}<div class="spr">${SP[e.k]}</div><div class="nm">${e.n}</div>${mini(e)}${stH(e)}</button>`}).join('')}</div></div>
 <div class="res"><div class="orb" aria-label="행동력">${B.energy}/${B.maxE}</div>${B.maxM?`<div><div class="mana">${[...Array(B.maxM)].map((_,i)=>`<span class="gem ${i<B.mana?'on':''}"></span>`).join('')}</div><div class="pile">마나 ${B.mana}/${B.maxM}</div></div>`:''}<button class="pile" data-a="pdraw">뽑을 카드 ${B.draw.length}<br>버린 카드 ${B.disc.length}</button><button class="ico" data-a="spd" aria-label="속도" style="font-weight:900;font-size:13px">×${OPT.fast?2:1}</button><button class="ico" data-a="help" aria-label="도움말" style="font-weight:900">?</button><button class="btn end" data-a="end" ${busy?'disabled':''}>${busy?'적의 차례…':'턴 종료'}</button></div>
 <div class="hand ${deal?'deal':''}">${B.hand.map((c,i)=>cardH(c,i,'play',canPlay(c))).join('')||'<p class="soft" style="padding:40px 0">손패가 비었어요</p>'}</div>`},
-reward(){const w=S.rw;return topBar()+`<div class="wrap"><div class="scene"><div class="sv">${SCN.reward}</div><div class="cap"><h2>${w.title}</h2></div></div><div class="panel center">${w.gold?`<p class="gold" style="font-weight:900">금화 +${w.gold}</p>`:''}${w.relic?`<div class="relrow">${relH(w.relic,S.relics.indexOf(w.relic)).replace('class="rel"','class="rel big"')}<div><b>유물 「${RL[w.relic].n}」</b><p class="soft">${RL[w.relic].d}</p></div></div>`:''}</div>${w.pot?`<div class="panel"><div class="srow" style="border:0"><span class="potbig">${potIco(w.pot,40)}</span><div style="flex:1"><b>${PO[w.pot].n}</b><p class="soft">${PO[w.pot].d}</p></div><button class="btn" data-a="takepot" ${w.potTaken||(S.pots||[]).length>=(S.potMax||2)?'disabled':''}>${w.potTaken?'받음':(S.pots||[]).length>=(S.potMax||2)?'칸 부족':'물약 받기'}</button></div></div>`:''}<div class="panel"><p style="font-weight:700">덱에 넣을 카드 1장을 고르세요</p><div class="grid">${w.cards.map((c,i)=>cardH(c,i,'pickc')).join('')}</div></div><button class="btn alt" data-a="next">카드 없이 계속</button></div>`},
+reward(){const w=S.rw;return topBar()+`<div class="wrap"><div class="scene"><div class="sv">${SCN.reward}</div><div class="cap"><h2>${w.title}</h2></div></div><div class="panel center">${w.gold?`<p class="gold" style="font-weight:900">금화 +${w.gold}</p>`:''}${w.relic?`<div class="relrow">${relH(w.relic,S.relics.indexOf(w.relic)).replace('class="rel"','class="rel big"')}<div><b>유물 「${RL[w.relic].n}」</b><p class="soft">${RL[w.relic].d}</p></div></div>`:''}</div>${w.pot?`<div class="panel"><div class="srow" style="border:0"><span class="potbig">${potIco(w.pot,40)}</span><div style="flex:1"><b>${PO[w.pot].n}</b><p class="soft">${PO[w.pot].d}</p></div><button class="btn" data-a="takepot" ${w.potTaken?'disabled':''}>${w.potTaken?'받음':(S.pots||[]).length>=(S.potMax||2)?'교체하기':'물약 받기'}</button></div></div>`:''}<div class="panel"><p style="font-weight:700">덱에 넣을 카드 1장을 고르세요</p><div class="grid">${w.cards.map((c,i)=>cardH(c,i,'pickc')).join('')}</div></div><button class="btn alt" data-a="next">카드 없이 계속</button></div>`},
 treasure(){const w=S.rw;return topBar()+`<div class="wrap"><div class="scene"><div class="sv">${SCN.treasure}</div><div class="cap"><h2>먼지 쌓인 보물상자</h2></div></div><div class="panel center"><p class="gold" style="font-weight:900">금화 +${w.gold}</p>${w.pot?`<div class="relrow"><span class="potbig">${potIco(w.pot,40)}</span><div><b>물약 「${PO[w.pot].n}」</b><p class="soft">${PO[w.pot].d}</p></div></div>`:''}${w.relic?`<div class="relrow">${relH(w.relic,S.relics.indexOf(w.relic)).replace('class="rel"','class="rel big"')}<div><b>유물 「${RL[w.relic].n}」</b><p class="soft">${RL[w.relic].d}</p></div></div>`:''}</div>${w.cards.length?`<div class="grid">${w.cards.map((c,i)=>cardH(c,i,'pickc')).join('')}</div>`:''}<button class="btn" data-a="next">계속</button></div>`},
 shop(){const s=S.shop;return topBar()+`<div class="wrap"><div class="scene"><div class="sv">${SCN.shop}</div><div class="cap"><h2>떠돌이 상인</h2></div></div><p class="sub">"좋은 물건 많다네. 금화만 있다면야."</p><div class="grid">${s.items.map((it,i)=>`<div class="${it.sold?'sold':''}">${cardH(it.c,i,'buy',S.gold>=it.p)}<span class="price">${it.p} 금화</span></div>`).join('')}</div>
-<div class="panel"><div class="sec"><span class="ribbon">물약</span><small class="soft">칸 ${(S.pots||[]).length}/${S.potMax||2}</small></div>${(s.pots||[]).map((o,i)=>`<div class="srow ${o.sold?'sold':''}"><span class="potbig">${potIco(o.k,40)}</span><div style="flex:1"><b>${PO[o.k].n}</b><p class="soft">${PO[o.k].d}</p></div><button class="btn alt" data-a="buypot" data-i="${i}" ${o.sold||S.gold<o.p||(S.pots||[]).length>=(S.potMax||2)?'disabled':''}>${o.p} 금화</button></div>`).join('')}</div>${s.rel?`<div class="panel ${s.rel.sold?'sold':''}"><div class="relrow">${relH(s.rel.k,0).replace('data-a="relinfo"','data-a="none"').replace('class="rel"','class="rel big"')}<div style="flex:1"><b>유물 「${RL[s.rel.k].n}」</b><p class="soft">${RL[s.rel.k].d}</p></div><button class="btn alt" data-a="buyrel" ${S.gold<s.rel.p?'disabled':''}>${s.rel.p} 금화</button></div></div>`:''}
+<div class="panel"><div class="sec"><span class="ribbon">물약</span><small class="soft">칸 ${(S.pots||[]).length}/${S.potMax||2}</small></div>${(s.pots||[]).map((o,i)=>`<div class="srow ${o.sold?'sold':''}"><span class="potbig">${potIco(o.k,40)}</span><div style="flex:1"><b>${PO[o.k].n}</b><p class="soft">${PO[o.k].d}</p></div><button class="btn alt" data-a="buypot" data-i="${i}" ${o.sold||S.gold<o.p?'disabled':''}>${o.p} 금화</button></div>`).join('')}</div>${s.rel?`<div class="panel ${s.rel.sold?'sold':''}"><div class="relrow">${relH(s.rel.k,0).replace('data-a="relinfo"','data-a="none"').replace('class="rel"','class="rel big"')}<div style="flex:1"><b>유물 「${RL[s.rel.k].n}」</b><p class="soft">${RL[s.rel.k].d}</p></div><button class="btn alt" data-a="buyrel" ${S.gold<s.rel.p?'disabled':''}>${s.rel.p} 금화</button></div></div>`:''}
 <div class="panel"><div class="row-btns"><button class="btn alt" data-a="srm" ${s.rm||S.gold<60||S.deck.length<6?'disabled':''}>카드 1장 버리기 · 60</button><button class="btn alt" data-a="sheal" ${s.heal||S.gold<40||S.hp>=S.max?'disabled':''}>체력 20 회복 · 40</button></div></div><button class="btn" data-a="next">다음 층으로</button></div>`},
 rest(){return topBar()+`<div class="wrap"><div class="scene"><div class="sv">${SCN.rest}</div><div class="cap"><h2>계단참의 모닥불</h2></div></div><p class="sub">잠시 쉬어 가거나, 장비를 손질하세요.</p><div class="row-btns"><button class="btn" data-a="rheal">휴식 · 체력 ${Math.ceil(S.max*(asc(5)?.225:.3))} 회복</button><button class="btn alt" data-a="rup" ${S.deck.every(c=>c.up)?'disabled':''}>카드 1장 강화</button></div></div>`},
 event(){const ev=EV[S.ev.i];return topBar()+`<div class="wrap"><div class="scene"><div class="sv">${SCN.event}</div><div class="cap"><h2>${ev.t}</h2></div></div><div class="panel"><p style="font-size:17px">${S.ev.res||ev.d}</p></div>
@@ -1031,6 +1044,11 @@ function modalH(){if(!MOD)return'';const m=MOD.m;let title='',body='';
  else if(m==='help'){title='도움말';body=`<div class="gl"><p><b>행동력</b> 카드 왼쪽 위 숫자만큼 써요. 매 턴 다시 차요.</p><p><b>마나</b> 카드 오른쪽 위 마름모만큼 써요. 용사마다 회복량이 달라요.</p><p><b>적 머리 위 표시</b> 다음 행동이에요. 칼은 공격(숫자 × 횟수), 방패는 방어도.</p><p><b>방어도</b> 받는 피해를 먼저 막아요. 내 턴이 시작되면 사라져요.</p><p><b>취약</b> 받는 피해 50% 증가. <b>약화</b> 주는 피해 25% 감소.</p><p><b>출혈·화상</b> 턴 시작마다 수치만큼 피해를 입고 1 줄어요.</p><p><b>힘</b> 공격 피해가 수치만큼 늘어요. <b>가시</b> 공격받을 때마다 수치만큼 되돌려줘요.</p><p><b>소멸</b> 쓰면 이번 전투 동안 덱에서 빠져요.</p><p><b>물약</b> 화면 위쪽 물약 칸을 누르면 행동력 없이 바로 써요. 대상은 지금 선택된 적이에요.</p><p><b>카드 끌기</b> 카드를 적에게 끌어다 놓으면 그 적에게 써요. 끄는 동안 예상 피해가 보여요.</p><p>적을 눌러 공격 대상을 바꿀 수 있어요.</p></div>`}
  else if(m==='daily'){const{s,amt}=dailyAmt(),done=META.daily===today();title='출석 보상';body=`<div class="panel center"><svg viewBox="0 0 24 24" width="80" height="80">${ICO.shard.replace(/<\/?svg[^>]*>/g,'')}</svg><h2>${done?'오늘은 이미 받았어요':`${s}일 연속 출석!`}</h2><p class="soft">매일 들르면 보상이 커져요 (7일째 최대).</p>${done?`<p>내일 또 만나요. 현재 ${META.streak}일 연속.</p>`:`<button class="btn big" data-a="claimd">별조각 ${amt}개 받기</button>`}</div>`}
  else if(m==='dev'){title='개발자 메뉴';body=devH()}
+ else if(m==='pot'){const i=MOD.i,k=(S.pots||[])[i];if(!k){MOD=null;return''}const P=PO[k],can=B&&S.scr==='battle'&&!busy,full=k==='heal'&&B&&B.p.hp>=B.p.max,t=k==='venom'&&B?tg():null;title='물약';
+  body=`<div class="panel center potm"><div class="potbig">${potIco(k,84)}</div><h2>${P.n}</h2><p class="potd">${P.d}</p>${t?`<p class="soft">대상: <b>${t.n}</b> (전투 화면에서 적을 눌러 바꿀 수 있어요)</p>`:''}${!B?'<p class="soft">전투 중에만 마실 수 있어요</p>':full?'<p class="soft">체력이 이미 가득해요</p>':!can?'<p class="soft">내 턴에만 쓸 수 있어요</p>':''}<div class="potbtn">${B?`<button class="btn big" data-a="potgo" data-i="${i}" ${can&&!full?'':'disabled'}>사용하기</button>`:''}<button class="btn alt" data-a="potdrop" data-i="${i}">${MOD.sure?'정말 버리기':'버리기'}</button></div></div>`}
+ else if(m==='potswap'){const k=MOD.q[0],P=PO[k];title='물약 칸이 가득 찼어요';
+  body=`<div class="panel center potm"><div class="potbig">${potIco(k,72)}</div><h2>새 물약: ${P.n}</h2><p class="potd">${P.d}</p>${MOD.src==='shop'?`<p class="soft">가격 ${S.shop.pots[MOD.si].p} 금화</p>`:''}<p style="margin:14px 0 8px"><b>바꿀 물약을 고르세요</b></p><div class="swl">${S.pots.map((o,i)=>`<button class="swr" data-a="potswap" data-i="${i}">${potIco(o,40)}<span><b>${PO[o].n}</b><small>${PO[o].d}</small></span><em>교체</em></button>`).join('')}</div><button class="btn alt" style="margin-top:12px" data-a="potskip">${MOD.src==='shop'?'사지 않기':MOD.src==='rw'?'그만두기':'새 물약 버리기'}</button></div>`}
+ else if(m==='exit'){title='게임 종료';body=`<div class="panel center"><h2>게임을 종료할까요?</h2><p class="soft">진행 상황은 자동으로 저장돼요.</p><div class="potbtn"><button class="btn big" data-a="exitgo">종료</button><button class="btn alt" data-a="mclose">계속하기</button></div></div>`}
  else if(m==='tutask'){title='환영해요!';body=`<div class="panel center"><div class="spr" style="width:120px">${heroSvg('knight','base')}</div><h2>용의 탑에 오신 걸 환영해요</h2><p class="soft">2분짜리 튜토리얼로 기본을 익히고 별조각 100개를 받으세요.</p><button class="btn big" data-a="tutstart">튜토리얼 시작</button><button class="btn ghost" data-a="tutskip">건너뛰기</button></div>`}
  else if(m==='tutdone'){title='튜토리얼 완료';body=`<div class="panel center"><span class="result-ban">완료!</span><p style="font-size:17px">별조각 <b class="gold">+100</b>을 받았어요.</p><div class="gl" style="text-align:left"><p><b>팁</b> 지도에서는 정예(해골)를 피하거나 노리며 길을 정해요.</p><p><b>팁</b> 휴식처에서는 회복하거나 카드를 강화할 수 있어요.</p><p><b>팁</b> 원정이 끝나면 별조각으로 영웅·스킨·성장을 강화해요.</p></div><button class="btn big" data-a="expsel">첫 원정 떠나기</button></div>`}
  else if(m==='opts'){title='설정';body=`<div class="tog vol"><span>배경음악</span><input type="range" min="0" max="100" step="5" value="${OPT.music?OPT.mv:0}" data-v="mv" aria-label="배경음악 음량"><b id="vmv">${OPT.music?OPT.mv:0}</b></div><div class="tog vol"><span>효과음</span><input type="range" min="0" max="100" step="5" value="${OPT.sfx?OPT.sv:0}" data-v="sv" aria-label="효과음 음량"><b id="vsv">${OPT.sfx?OPT.sv:0}</b></div><div class="tog"><span>적 턴 2배속</span><button class="btn ${OPT.fast?'':'alt'}" data-a="spd">${OPT.fast?'켜짐':'꺼짐'}</button></div>${!S?'<div class="tog"><span>튜토리얼 다시 하기</span><button class="btn alt" data-a="tutstart">시작</button></div>':''}${META.dev&&DEV_BUILD?'<div class="tog"><span>개발자 메뉴</span><button class="btn alt" data-a="devm">열기</button></div>':''}${S&&!S.done?`<div class="tog"><span>이번 원정 포기 (별조각은 받아요)</span><button class="btn alt" data-a="abandon">${MOD.sure?'정말 포기':'포기하기'}</button></div>`:''}`}
@@ -1099,8 +1117,8 @@ desert:`<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"><defs><l
 });
 /* ================= 새 용사: 궁수 · 성직자 ================= */
 Object.assign(H,{
-ranger:{n:'궁수 세라',sub:'표식과 집중 사격',hp:70,maxM:0,regen:0,drawN:5,tags:['체력 70','마나 없음','손패 5'],p:'전투 시작 시 모든 적에게 표식 2. 표식이 있는 적은 내 공격을 맞을 때마다 표식만큼 피해를 더 받아요.',deck:{shoot:4,guard:4,markc:1,trap:1},lock:500,skins:[['base','기본',0],['elf','숲의 엘프',700,{hp:5,draw1:1}],['night','밤의 추적자',1200,{str:1,gold:30}],['myth','달빛 사냥꾼',0,{str:1,hp:8,draw1:1},1]]},
-cleric:{n:'성직자 엘린',sub:'회복과 신성 마법',hp:72,maxM:3,regen:1,drawN:5,tags:['체력 72','마나 3','손패 5'],p:'턴이 끝날 때마다 체력 2 회복. 오래 버티며 신성 마법으로 적을 태웁니다.',deck:{mace:3,holy:2,guard:3,pray2:1,faith:1},lock:500,skins:[['base','기본',0],['abyss','심연의 사제',700,{mana:1}],['saint','대성녀',1200,{hp:10,regen:1}],['myth','빛의 화신',0,{mana:1,regen:1,hp:8},1]]}
+ranger:{n:'궁수 세라',sub:'표식과 집중 사격',hp:70,maxM:0,regen:0,drawN:5,tags:['체력 70','마나 없음','손패 5'],p:'전투 시작 시 모든 적에게 표식 2. 표식이 있는 적은 내 공격을 맞을 때마다 표식만큼 피해를 더 받아요.',deck:{shoot:4,guard:4,markc:1,trap:1},lock:500,skins:[['base','기본',0],['elf','숲의 엘프',1000,{hp:5,draw1:1}],['night','밤의 추적자',1800,{str:1,gold:30}],['myth','달빛 사냥꾼',0,{str:1,hp:8,draw1:1},1]]},
+cleric:{n:'성직자 엘린',sub:'회복과 신성 마법',hp:72,maxM:3,regen:1,drawN:5,tags:['체력 72','마나 3','손패 5'],p:'턴이 끝날 때마다 체력 2 회복. 오래 버티며 신성 마법으로 적을 태웁니다.',deck:{mace:3,holy:2,guard:3,pray2:1,faith:1},lock:500,skins:[['base','기본',0],['abyss','심연의 사제',1000,{mana:1}],['saint','대성녀',1800,{hp:10,regen:1}],['myth','빛의 화신',0,{mana:1,regen:1,hp:8},1]]}
 });
 HK.push('ranger','cleric');
 Object.assign(PAL,{
@@ -1313,12 +1331,20 @@ smoke:{n:'약화 가루',d:'적 전체 약화 2, 취약 1',c:'#8a7aa8',f(){alive
 const PK=Object.keys(PO);
 const potIco=(k,sz=24)=>`<svg viewBox="0 0 24 24" width="${sz}" height="${sz}"><path d="M9 3h6v4l4 6.5A6 6 0 0 1 13.8 22h-3.6A6 6 0 0 1 5 13.5L9 7z" fill="${PO[k].c}" stroke="#2a1418" stroke-width="1.3"/><path d="M8.5 3h7" stroke="#c9a060" stroke-width="2.6" stroke-linecap="round"/><ellipse cx="10" cy="14.5" rx="1.8" ry="3" fill="#fff" opacity=".5"/></svg>`;
 function gainPot(k){if(!S.pots)S.pots=[];if(S.pots.length>=(S.potMax||2))return false;S.pots.push(k);sfx('coin');return true}
+function offerPot(k,src,si){if(gainPot(k))return true;if(MOD&&MOD.m==='potswap'){MOD.q.push(k);return false}MOD={m:'potswap',q:[k],src:src||'free',si,prev:MOD};sfx('err');return false}
+function potNext(){MOD.q.shift();if(!MOD.q.length)MOD=MOD.prev||null;save();render()}
 const potsH=()=>`<span class="pots">${[...Array(S.potMax||2)].map((_,i)=>{const k=(S.pots||[])[i];return k?`<button class="pot" data-a="pot" data-i="${i}" aria-label="${PO[k].n}">${potIco(k)}</button>`:'<span class="pot empty"></span>'}).join('')}</span>`;
 const V9A={
-pot(i){const k=(S.pots||[])[i];if(!k)return;if(!B||S.scr!=='battle'||busy||MOD)return toast(`${PO[k].n} — ${PO[k].d}${B?'':' · 전투 중에 쓸 수 있어요'}`,2200);
- if(k==='heal'&&B.p.hp>=B.p.max)return toast('체력이 이미 가득해요');S.pots.splice(i,1);PO[k].f();buzz(15);if(dead())return lose();if(!alive().length){busy=true;render();return setTimeout(win,900)}render()},
-takepot(){const w=S.rw;if(!w||!w.pot||w.potTaken)return;if(gainPot(w.pot)){w.potTaken=1;save();render()}else toast('물약 칸이 가득 찼어요')},
-buypot(i){const o=S.shop.pots[i];if(!o||o.sold||S.gold<o.p)return;if(!gainPot(o.k))return toast('물약 칸이 가득 찼어요');S.gold-=o.p;o.sold=1;save();render()}
+exitgo(){try{save&&S&&save()}catch(e){}try{window.Capacitor.Plugins.App.exitApp()}catch(e){MOD=null;render()}},
+pot(i){const k=(S.pots||[])[i];if(!k||MOD)return;sfx('click');MOD={m:'pot',i};render()},
+potdrop(i){const k=(S.pots||[])[i];if(!k)return;if(MOD&&!MOD.sure){MOD.sure=1;sfx('err');return render()}S.pots.splice(i,1);MOD=null;save();toast(`${PO[k].n}을(를) 버렸어요`);render()},
+potgo(i){const k=(S.pots||[])[i];if(!k)return;if(!B||S.scr!=='battle'||busy)return toast('내 턴에만 쓸 수 있어요');
+ if(k==='heal'&&B.p.hp>=B.p.max)return toast('체력이 이미 가득해요');MOD=null;S.pots.splice(i,1);cntAdd('pots',1);saveMeta();PO[k].f();buzz(15);if(dead())return lose();if(!alive().length){busy=true;render();return setTimeout(win,900)}render()},
+takepot(){const w=S.rw;if(!w||!w.pot||w.potTaken)return;if(offerPot(w.pot,'rw')){w.potTaken=1;save()}render()},
+potswap(i){if(!MOD||MOD.m!=='potswap')return;const k=MOD.q[0],old=S.pots[i];if(!old)return;S.pots[i]=k;sfx('coin');
+ if(MOD.src==='rw'&&S.rw)S.rw.potTaken=1;if(MOD.src==='shop'){const o=S.shop.pots[MOD.si];if(o&&!o.sold){S.gold-=o.p;o.sold=1}}toast(`${PO[old].n} → ${PO[k].n}`);potNext()},
+potskip(){if(!MOD||MOD.m!=='potswap')return;potNext()},
+buypot(i){const o=S.shop.pots[i];if(!o||o.sold||S.gold<o.p)return;if(!offerPot(o.k,'shop',i))return render();S.gold-=o.p;o.sold=1;save();render()}
 };
 /* ================= 입력 ================= */
 let startSure=0;
@@ -1328,6 +1354,8 @@ cont(){S=load();if(S){S.scr=S.scr==='battle'?'map':S.scr;MOD=null}render()},
 title(){S=null;B=null;M='title';MOD=null;render()},
 heroes(){M='heroes';render()},growth(){M='growth';render()},quests(){M='quests';render()},
 daily(){MOD={m:'daily'};render()},
+dqclaim(i){const q=dqCur(),a=DQP[q.ids[i]];if(!a||q.cl.includes(i)||(q.c[a.k]||0)<a.g)return;q.cl.push(i);META.shards+=DQ_R;saveMeta();sfx('relic');toast(`별조각 +${DQ_R}`);render()},
+dqall(){const q=dqCur();if(q.cl.length<3||q.all)return;q.all=1;META.shards+=DQ_ALL;META.frag=(META.frag||0)+1;saveMeta();sfx('relic');toast(`별조각 +${DQ_ALL} · 신화 조각 +1`);render()},
 claimd(){if(META.daily===today())return;const{s,amt}=dailyAmt();META.daily=today();META.streak=s;META.shards+=amt;saveMeta();sfx('relic');toast(`별조각 +${amt}`);MOD=null;render()},
 sel(i){if(!META.unlocked.includes(HK[i]))return;META.sel=HK[i];saveMeta();sfx('click');render()},
 unlock(i){const k=HK[i],c=H[k].lock;if(META.unlocked.includes(k)||META.shards<c)return;META.shards-=c;META.unlocked.push(k);META.sel=k;saveMeta();sfx('relic');banner(`${H[k].n} 합류!`);render()},
@@ -1342,7 +1370,7 @@ node(i){if(S.floor>=S.map.length||!canGo(i))return;sfx('click');S.pos=i;S.path[S
  if(t==='rest')S.scr='rest';
  else if(t==='shop'){const rk=rollRelic();S.shop={pots:shuf([...PK]).slice(0,2).map(k=>({k,p:Math.round(R(40,60)*(XM('shop')?1.3:1)),sold:0})),items:rollCards(5,'shop').map(c=>({c,p:price(c),sold:0})),rel:rk?{k:rk,p:R(140,170),sold:0}:null,rm:0,heal:0};S.scr='shop'}
  else if(t==='event'){let opts=EV.map((_,k)=>k).filter(k=>!S.seen.includes(k));if(!opts.length)opts=EV.map((_,k)=>k);const k=pick(opts);S.seen.push(k);S.ev={i:k,res:null};S.scr='event'}
- else{let g=R(40,70);if(has('lucky'))g=Math.round(g*1.5);S.gold+=g;const rel=rollRelic();if(rel)gainRelic(rel);S.rw={gold:g,relic:rel,cards:rel?[]:rollCards(2,'rare',true)};{const pk=pick(PK);if(gainPot(pk))S.rw.pot=pk}S.scr='treasure';sfx('coin')}
+ else{let g=R(40,70);if(has('lucky'))g=Math.round(g*1.5);S.gold+=g;const rel=rollRelic();if(rel)gainRelic(rel);S.rw={gold:g,relic:rel,cards:rel?[]:rollCards(2,'rare',true)};{const pk=pick(PK);if(offerPot(pk))S.rw.pot=pk}S.scr='treasure';sfx('coin')}
  save();render()},
 play,
 tgt(i){if(busy||!B.en[i]||B.en[i].hp<=0)return;B.tgt=i;sfx('click');render()},
@@ -1363,7 +1391,7 @@ opts(){MOD={m:'opts'};render()},
 tmusic(){setOpt('music');render()},
 tsfx(){setOpt('sfx');render()},
 abandon(){if(!MOD.sure){MOD.sure=1;return render()}MOD=null;B=null;busy=false;S.ab=1;endRun(false);S.scr='lose';render()},
-mclose(){if(MOD&&MOD.ctx==='event'&&!S.ev.res)S.ev.res='마음을 바꿨다.';MOD=null;render()},
+mclose(){if(MOD&&MOD.m==='potswap')return A.potskip();if(MOD&&MOD.ctx==='event'&&!S.ev.res)S.ev.res='마음을 바꿨다.';MOD=null;render()},
 mpick(i){const m=MOD.m,ctx=MOD.ctx;
  if(m==='remove'){const c=S.deck.splice(i,1)[0];if(ctx==='shop'){S.gold-=60;S.shop.rm=1}else S.ev.res=`「${C[c.id].n}」 카드를 덱에서 지웠다.`}
  else if(m==='upgrade'){S.deck[i].up=true;cntAdd('ups',1);saveMeta();sfx('relic');if(ctx==='rest'){MOD=null;return proceed()}S.ev.res=`「${C[S.deck[i].id].n}」 카드가 강해졌다!`}
@@ -1375,6 +1403,6 @@ Object.assign(A,DEVA,V7A,V8A,V9A);
 document.addEventListener('click',e=>{if(dragJust)return;const t=e.target.closest('[data-a]');if(!t||t.disabled)return;const f=A[t.dataset.a];if(f)f(+t.dataset.i)});
 document.addEventListener('keydown',e=>{if(S&&S.scr==='battle'&&!MOD){if(e.key==='e'||e.key==='E')endTurn();const n=+e.key;if(n>=1&&n<=9)play(n-1)}});
 render();
-try{if('serviceWorker' in navigator&&location.protocol==='https:'&&!window.Capacitor)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+try{if('serviceWorker' in navigator&&location.protocol==='https:'&&location.hostname!=='localhost')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 }
 </script></body></html>
