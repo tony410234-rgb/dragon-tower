@@ -489,10 +489,10 @@ const saveMeta=()=>ls.set(MKEY,META);
 const cntAdd=(k,n)=>{META.cnt[k]=(META.cnt[k]||0)+n;dqAdd(k,n)};
 const cntMax=(k,n)=>{if(n>(META.cnt[k]||0))META.cnt[k]=n};
 const H={
-knight:{n:'성기사 에단',sub:'방패와 반격',hp:86,maxM:2,regen:1,drawN:5,tags:['체력 86','마나 2','손패 5'],p:'전투를 방어도 10으로 시작해요. 방어도를 쌓아 버티다가 방패 강타로 되갚아 줍니다.',deck:{slash:4,guard:4,bash:1,prayer:1},skins:[['base','기본',0],['dark','흑기사',1000,{str:1}],['sun','태양의 성기사',1800,{hp:10,blk:5}],['myth','용기사',0,{hp:10,str:1,blk:6},1]]},
-mage:{n:'대마법사 리아',sub:'강력한 주문',hp:66,maxM:4,regen:2,drawN:5,tags:['체력 66','마나 4','손패 5'],p:'마나가 많고 매 턴 2씩 차올라요. 몸은 약하지만 주문 한 방이 큽니다.',deck:{staff:3,fire:2,guard:3,ward:1,med:1},skins:[['base','기본',0],['flame','불꽃술사',1000,{mana:1}],['frost','서리마녀',1800,{mana:1,hp:5}],['myth','시간의 대현자',0,{mana:1,draw1:2,hp:8},1]]},
-rogue:{n:'그림자 도적 카이',sub:'출혈과 연속 공격',hp:60,maxM:0,regen:0,drawN:6,tags:['체력 60','마나 없음','손패 6'],p:'매 턴 카드를 6장 뽑고, 출혈을 걸 때마다 1씩 더 겁니다. 출혈을 쌓아 한 번에 터뜨리세요.',deck:{stab:4,guard:4,dodge:1,thorn:1},skins:[['base','기본',0],['crimson','붉은 그림자',1000,{gold:40}],['cat','밤고양이',1800,{draw1:2,hp:5}],['myth','그림자 군주',0,{str:1,draw1:1,hp:8},1]]},
-berserker:{n:'광전사 브론',sub:'피와 분노',hp:92,maxM:0,regen:0,drawN:5,tags:['체력 92','마나 없음','손패 5'],p:'체력이 절반 이하가 되면 힘 +3. 자기 체력을 깎아 더 큰 힘을 냅니다.',deck:{chop:4,guard:4,bloodhit:1,warcry:1},lock:400,skins:[['base','기본',0],['bone','해골 족장',1000,{hp:8}],['storm','폭풍 전사',1800,{str:1,hp:5}],['myth','불멸의 전쟁군주',0,{hp:15,str:1},1]]}
+knight:{n:'성기사 에단',sub:'방패와 반격',hp:86,maxM:2,regen:1,drawN:5,tags:['체력 86','마나 2','손패 5'],p:'전투를 방어도 12로 시작해요. 방어도를 쌓아 버티다가 방패 강타로 되갚아 줍니다.',deck:{slash:4,guard:4,bash:1,prayer:1},skins:[['base','기본',0],['dark','흑기사',1000,{str:1}],['sun','태양의 성기사',1800,{hp:10,blk:5}],['myth','용기사',0,{hp:10,str:1,blk:6},1]]},
+mage:{n:'대마법사 리아',sub:'강력한 주문',hp:70,maxM:4,regen:2,drawN:5,tags:['체력 70','마나 4','손패 5'],p:'마나가 많고 매 턴 2씩 차올라요. 몸은 약하지만 주문 한 방이 큽니다.',deck:{staff:3,fire:2,guard:3,ward:1,med:1},skins:[['base','기본',0],['flame','불꽃술사',1000,{mana:1}],['frost','서리마녀',1800,{mana:1,hp:5}],['myth','시간의 대현자',0,{mana:1,draw1:2,hp:8},1]]},
+rogue:{n:'그림자 도적 카이',sub:'출혈과 연속 공격',hp:56,maxM:0,regen:0,drawN:6,tags:['체력 56','마나 없음','손패 6'],p:'매 턴 카드를 6장 뽑고, 출혈을 걸 때마다 1씩 더 겁니다. 출혈을 쌓아 한 번에 터뜨리세요.',deck:{stab:4,guard:4,dodge:1,thorn:1},skins:[['base','기본',0],['crimson','붉은 그림자',1000,{gold:40}],['cat','밤고양이',1800,{draw1:2,hp:5}],['myth','그림자 군주',0,{str:1,draw1:1,hp:8},1]]},
+berserker:{n:'광전사 브론',sub:'피와 분노',hp:84,maxM:0,regen:0,drawN:5,tags:['체력 84','마나 없음','손패 5'],p:'체력이 절반 이하가 되면 힘 +2. 자기 체력을 깎아 더 큰 힘을 냅니다.',deck:{chop:4,guard:4,bloodhit:1,warcry:1},lock:400,skins:[['base','기본',0],['bone','해골 족장',1000,{hp:8}],['storm','폭풍 전사',1800,{str:1,hp:5}],['myth','불멸의 전쟁군주',0,{hp:15,str:1},1]]}
 };
 const HK=['knight','mage','rogue','berserker'];
 const PAL={
@@ -551,10 +551,10 @@ const TL={atk:'근접',mag:'마법',def:'방어',skl:'기술'};
 const C={
 slash:{n:'베기',t:'atk',e:1,r:'b',h:'all',v:[6,9],d:v=>`피해 ${v}`,f:v=>hit(v)},
 guard:{n:'방패 들기',t:'def',e:1,r:'b',h:'all',v:[5,8],d:v=>`방어도 ${v}`,f:v=>blk(v)},
-dodge:{n:'재빠른 막기',t:'def',e:0,r:'c',h:'all',v:[4,7],d:v=>`방어도 ${v}`,f:v=>blk(v)},
-whirl:{n:'회전 베기',t:'atk',e:1,r:'c',h:'all',v:[4,5],d:v=>`피해 ${v} × 3`,f:v=>hit(v,3)},
-cleave:{n:'휩쓸기',t:'atk',e:1,r:'c',h:'all',v:[7,10],d:v=>`적 전체에게 피해 ${v}`,f:v=>hitAll(v)},
-insp:{n:'영감',t:'skl',e:0,r:'c',h:'all',v:[2,3],d:v=>`카드 ${v}장 뽑기`,f:v=>draw(v)},
+dodge:{n:'재빠른 막기',t:'def',e:0,r:'c',h:'all',v:[3,5],d:v=>`방어도 ${v}`,f:v=>blk(v)},
+whirl:{n:'회전 베기',t:'atk',e:1,r:'c',h:'all',v:[3,4],d:v=>`피해 ${v} × 3`,f:v=>hit(v,3)},
+cleave:{n:'휩쓸기',t:'atk',e:1,r:'c',h:'all',v:[5,8],d:v=>`적 전체에게 피해 ${v}`,f:v=>hitAll(v)},
+insp:{n:'영감',t:'skl',e:0,r:'c',h:'all',v:[1,2],d:v=>`카드 ${v}장 뽑기`,f:v=>draw(v)},
 bomb:{n:'폭발 물약',t:'skl',e:1,x:1,r:'u',h:'all',v:[12,16],d:v=>`적 전체에게 피해 ${v}. 소멸`,f:v=>hitAll(v)},
 potion:{n:'회복 물약',t:'skl',e:0,x:1,r:'u',h:'all',v:[6,9],d:v=>`체력 ${v} 회복. 소멸`,f:v=>heal(v)},
 curse:{n:'저주',t:'skl',e:1,r:'u',h:'all',v:[2,3],d:v=>`취약 ${v}, 약화 ${v-1}`,f:v=>{const t=tg();if(t){st(t,'vul',v);st(t,'weak',v-1);sfx('debuff')}}},
@@ -564,52 +564,52 @@ rage:{n:'전투의 함성',t:'skl',e:1,x:1,r:'r',h:'all',v:[2,3],d:v=>`힘 +${v}
 bash:{n:'방패 강타',t:'atk',e:1,r:'c',h:'knight',v:[0,4],d:v=>`현재 방어도만큼 피해${v?' +'+v:''}`,f:v=>hit(B.p.block+v)},
 prayer:{n:'기도',t:'skl',e:1,r:'c',h:'knight',v:[6,9],d:v=>`방어도 ${v}, 체력 3 회복`,f:v=>{blk(v);heal(3)}},
 smite:{n:'신성한 일격',t:'mag',e:1,a:1,r:'c',h:'knight',v:[9,12],d:v=>`피해 ${v}, 약화 1`,f:v=>{hit(v);const t=tg();if(t)st(t,'weak',1)}},
-iron:{n:'철벽',t:'def',e:2,r:'u',h:'knight',v:[16,22],d:v=>`방어도 ${v}`,f:v=>blk(v)},
-riposte:{n:'반격 태세',t:'skl',e:1,r:'u',h:'knight',v:[3,5],d:v=>`가시 +${v} (맞을 때마다 되돌려줌)`,f:v=>{st(B.p,'thorns',v);sfx('buff')}},
+iron:{n:'철벽',t:'def',e:2,r:'u',h:'knight',v:[15,20],d:v=>`방어도 ${v}`,f:v=>blk(v)},
+riposte:{n:'반격 태세',t:'skl',e:1,r:'u',h:'knight',v:[2,3],d:v=>`가시 +${v} (맞을 때마다 되돌려줌)`,f:v=>{st(B.p,'thorns',v);sfx('buff')}},
 hold:{n:'굳건함',t:'skl',e:[1,0],r:'u',h:'knight',v:[0,0],d:()=>`다음 턴까지 방어도 유지`,f:()=>{st(B.p,'keep',1);sfx('buff')}},
-charge:{n:'성검 돌격',t:'mag',e:2,a:1,r:'u',h:'knight',v:[15,20],d:v=>`피해 ${v}, 방어도 ${v>15?10:8}`,f:v=>{hit(v);blk(v>15?10:8)}},
-judge:{n:'심판',t:'atk',e:2,r:'r',h:'knight',v:[20,26],d:v=>`피해 ${v}. 처치하면 최대 체력 +3`,f:v=>{const t=tg();hit(v);if(t&&t.hp<=0){B.p.max+=3;B.p.hp+=3;fx('pl','최대 체력 +3','g')}}},
-vow:{n:'성스러운 맹세',t:'skl',e:1,x:1,r:'r',h:'knight',v:[4,6],d:v=>`매 턴 시작 시 방어도 ${v}. 소멸`,f:v=>{st(B.p,'plate',v);sfx('buff')}},
+charge:{n:'성검 돌격',t:'mag',e:2,a:1,r:'u',h:'knight',v:[12,16],d:v=>`피해 ${v}, 방어도 ${v>12?8:6}`,f:v=>{hit(v);blk(v>12?8:6)}},
+judge:{n:'심판',t:'atk',e:2,r:'r',h:'knight',v:[18,24],d:v=>`피해 ${v}. 처치하면 최대 체력 +3`,f:v=>{const t=tg();hit(v);if(t&&t.hp<=0){B.p.max+=3;B.p.hp+=3;fx('pl','최대 체력 +3','g')}}},
+vow:{n:'성스러운 맹세',t:'skl',e:2,x:1,r:'r',h:'knight',v:[4,6],d:v=>`매 턴 시작 시 방어도 ${v}. 소멸`,f:v=>{st(B.p,'plate',v);sfx('buff')}},
 staff:{n:'지팡이 치기',t:'atk',e:1,r:'c',h:'mage',v:[6,9],d:v=>`피해 ${v}, 마나 +1`,f:v=>{hit(v);addMana(1)}},
-fire:{n:'화염구',t:'mag',e:1,a:1,r:'c',h:'mage',v:[12,16],d:v=>`피해 ${v}`,f:v=>hit(v)},
+fire:{n:'화염구',t:'mag',e:1,a:1,r:'c',h:'mage',v:[10,13],d:v=>`피해 ${v}`,f:v=>hit(v)},
 med:{n:'명상',t:'skl',e:0,r:'c',h:'mage',v:[2,3],d:v=>`마나 +${v}`,f:v=>{addMana(v);sfx('mana')}},
 ward:{n:'마력 방벽',t:'def',e:1,r:'c',h:'mage',v:[6,9],d:v=>`방어도 ${v}, 마나 +1`,f:v=>{blk(v);addMana(1)}},
 ice:{n:'얼음창',t:'mag',e:1,a:1,r:'c',h:'mage',v:[8,11],d:v=>`피해 ${v}, 약화 2`,f:v=>{hit(v);const t=tg();if(t)st(t,'weak',2)}},
 chain:{n:'연쇄 번개',t:'mag',e:1,a:1,r:'u',h:'mage',v:[8,11],d:v=>`적 전체에게 피해 ${v}`,f:v=>hitAll(v)},
 ignite:{n:'점화',t:'mag',e:1,a:1,r:'u',h:'mage',v:[5,7],d:v=>`피해 3, 화상 ${v}`,f:v=>{const t=tg();hit(3);if(t&&t.hp>0)pst(t,'burn',v)}},
-tome:{n:'비전 지식',t:'skl',e:1,r:'u',h:'mage',v:[3,4],d:v=>`카드 ${v}장 뽑기`,f:v=>draw(v)},
-storm:{n:'불꽃 폭풍',t:'mag',e:1,xa:1,r:'r',h:'mage',v:[7,9],d:v=>`마나를 모두 써서, 1당 적 전체에게 피해 ${v}`,f:v=>{const m=B.mana;B.mana=0;for(let k=0;k<m;k++)hitAll(v)}},
-meteor:{n:'운석 낙하',t:'mag',e:2,a:2,r:'r',h:'mage',v:[30,40],d:v=>`피해 ${v}`,f:v=>hit(v)},
-warp:{n:'시간 왜곡',t:'skl',e:0,x:1,r:'r',h:'mage',v:[2,3],d:v=>`행동력 +${v}. 소멸`,f:v=>{B.energy+=v;sfx('buff')}},
+tome:{n:'비전 지식',t:'skl',e:1,r:'u',h:'mage',v:[2,3],d:v=>`카드 ${v}장 뽑기`,f:v=>draw(v)},
+storm:{n:'불꽃 폭풍',t:'mag',e:1,xa:1,r:'r',h:'mage',v:[5,7],d:v=>`마나를 모두 써서, 1당 적 전체에게 피해 ${v}`,f:v=>{const m=B.mana;B.mana=0;for(let k=0;k<m;k++)hitAll(v)}},
+meteor:{n:'운석 낙하',t:'mag',e:2,a:2,r:'r',h:'mage',v:[26,34],d:v=>`피해 ${v}`,f:v=>hit(v)},
+warp:{n:'시간 왜곡',t:'skl',e:0,x:1,r:'r',h:'mage',v:[1,2],d:v=>`행동력 +${v}. 소멸`,f:v=>{B.energy+=v;sfx('buff')}},
 stab:{n:'찌르기',t:'atk',e:1,r:'c',h:'rogue',v:[4,6],d:v=>`피해 ${v}, 출혈 1`,f:v=>{const t=tg();hit(v);if(t&&t.hp>0)pst(t,'bleed',1)}},
-knife:{n:'단검 투척',t:'atk',e:0,r:'c',h:'rogue',v:[4,6],d:v=>`피해 ${v}`,f:v=>hit(v)},
-thorn:{n:'가시 단검',t:'atk',e:1,r:'c',h:'rogue',v:[7,9],d:v=>`피해 ${v}, 출혈 ${v>7?4:3}`,f:v=>{const t=tg();hit(v);if(t&&t.hp>0)pst(t,'bleed',v>7?4:3)}},
+knife:{n:'단검 투척',t:'atk',e:0,r:'c',h:'rogue',v:[3,5],d:v=>`피해 ${v}`,f:v=>hit(v)},
+thorn:{n:'가시 단검',t:'atk',e:1,r:'c',h:'rogue',v:[6,8],d:v=>`피해 ${v}, 출혈 ${v>6?3:2}`,f:v=>{const t=tg();hit(v);if(t&&t.hp>0)pst(t,'bleed',v>6?3:2)}},
 shadow:{n:'그림자 걸음',t:'def',e:1,r:'c',h:'rogue',v:[7,10],d:v=>`방어도 ${v}, 카드 1장 뽑기`,f:v=>{blk(v);draw(1)}},
 prep:{n:'준비',t:'skl',e:0,r:'c',h:'rogue',v:[1,2],d:v=>`카드 ${v}장 뽑기, 출혈 중인 적이 있으면 1장 더`,f:v=>draw(v+(alive().some(e=>e.st.bleed>0)?1:0))},
-flurry:{n:'연속 찌르기',t:'atk',e:1,r:'u',h:'rogue',v:[3,4],d:v=>`피해 ${v} × 4`,f:v=>hit(v,4)},
-fog:{n:'독 안개',t:'skl',e:1,r:'u',h:'rogue',v:[4,6],d:v=>`적 전체 출혈 ${v}`,f:v=>{alive().forEach(e=>pst(e,'bleed',v));sfx('debuff')}},
-feast:{n:'피의 축제',t:'skl',e:[1,0],r:'u',h:'rogue',v:[0,0],d:()=>`대상의 출혈을 2배로`,f:()=>{const t=tg();if(t&&t.st.bleed){t.st.bleed*=2;fx(t.id,'출혈 ×2','r');sfx('debuff')}}},
-finish:{n:'마무리 일격',t:'atk',e:2,r:'u',h:'rogue',v:[12,16],d:v=>`피해 ${v}. 대상이 출혈 중이면 2배`,f:v=>{const t=tg();hit(t&&t.st.bleed>0?v*2:v)}},
-execu:{n:'그림자 처형',t:'atk',e:1,r:'r',h:'rogue',v:[3,4],d:v=>`대상의 출혈 1당 피해 ${v}`,f:v=>{const t=tg();hit(t?(t.st.bleed||0)*v:0)}},
+flurry:{n:'연속 찌르기',t:'atk',e:1,r:'u',h:'rogue',v:[2,3],d:v=>`피해 ${v} × 4`,f:v=>hit(v,4)},
+fog:{n:'독 안개',t:'skl',e:1,r:'u',h:'rogue',v:[3,4],d:v=>`적 전체 출혈 ${v}`,f:v=>{alive().forEach(e=>pst(e,'bleed',v));sfx('debuff')}},
+feast:{n:'피의 축제',t:'skl',e:[2,1],r:'u',h:'rogue',v:[0,0],d:()=>`대상의 출혈을 2배로`,f:()=>{const t=tg();if(t&&t.st.bleed){t.st.bleed*=2;fx(t.id,'출혈 ×2','r');sfx('debuff')}}},
+finish:{n:'마무리 일격',t:'atk',e:2,r:'u',h:'rogue',v:[10,13],d:v=>`피해 ${v}. 대상이 출혈 중이면 2배`,f:v=>{const t=tg();hit(t&&t.st.bleed>0?v*2:v)}},
+execu:{n:'그림자 처형',t:'atk',e:2,r:'r',h:'rogue',v:[3,4],d:v=>`대상의 출혈 1당 피해 ${v}`,f:v=>{const t=tg();hit(t?(t.st.bleed||0)*v:0)}},
 venom:{n:'맹독술',t:'skl',e:1,x:1,r:'r',h:'rogue',v:[2,3],d:v=>`이번 전투 동안 출혈을 걸 때 +${v}. 소멸`,f:v=>{st(B.p,'venom',v);sfx('buff')}},
-chop:{n:'도끼 찍기',t:'atk',e:1,r:'c',h:'berserker',v:[7,10],d:v=>`피해 ${v}`,f:v=>hit(v)},
-bloodhit:{n:'피의 일격',t:'atk',e:1,r:'c',h:'berserker',v:[13,17],d:v=>`체력 3을 잃고 피해 ${v}`,f:v=>{selfHurt(3);hit(v)}},
-warcry:{n:'전쟁의 포효',t:'skl',e:1,r:'c',h:'berserker',v:[1,2],d:v=>`힘 +${v}, 적 전체 취약 1`,f:v=>{st(B.p,'str',v);alive().forEach(e=>st(e,'vul',1));fxk('pl','buff');sfx('buff')}},
+chop:{n:'도끼 찍기',t:'atk',e:1,r:'c',h:'berserker',v:[6,9],d:v=>`피해 ${v}`,f:v=>hit(v)},
+bloodhit:{n:'피의 일격',t:'atk',e:1,r:'c',h:'berserker',v:[11,14],d:v=>`체력 3을 잃고 피해 ${v}`,f:v=>{selfHurt(3);hit(v)}},
+warcry:{n:'전쟁의 포효',t:'skl',e:[2,1],r:'c',h:'berserker',v:[1,2],d:v=>`힘 +${v}, 적 전체 취약 1`,f:v=>{st(B.p,'str',v);alive().forEach(e=>st(e,'vul',1));fxk('pl','buff');sfx('buff')}},
 painshield:{n:'고통의 방패',t:'def',e:1,r:'c',h:'berserker',v:[7,10],d:v=>`방어도 ${v} + 잃은 체력 10당 2`,f:v=>blk(v+Math.floor((B.p.max-B.p.hp)/10)*2)},
 thirst:{n:'피의 갈증',t:'atk',e:1,r:'u',h:'berserker',v:[8,11],d:v=>`피해 ${v}, 준 피해의 절반만큼 회복`,f:v=>{const t=tg();if(!t)return;const h0=t.hp;hit(v);const g=Math.floor((h0-t.hp)/2);if(g>0)heal(g)}},
 swing:{n:'대회전',t:'atk',e:2,r:'u',h:'berserker',v:[12,16],d:v=>`적 전체에게 피해 ${v}`,f:v=>hitAll(v)},
-frenzy:{n:'광폭화',t:'skl',e:0,r:'u',h:'berserker',v:[0,1],d:v=>`체력 4를 잃고 행동력 +2${v?', 카드 1장 뽑기':''}`,f:v=>{selfHurt(4);B.energy+=2;if(v)draw(1);fxk('pl','buff');sfx('buff')}},
+frenzy:{n:'광폭화',t:'skl',e:0,x:1,r:'u',h:'berserker',v:[0,1],d:v=>`체력 4를 잃고 행동력 +2${v?', 카드 1장 뽑기':''}. 소멸`,f:v=>{selfHurt(4);B.energy+=2;if(v)draw(1);fxk('pl','buff');sfx('buff')}},
 lastblow:{n:'최후의 일격',t:'atk',e:2,r:'r',h:'berserker',v:[0,8],d:v=>`잃은 체력만큼 피해${v?' +'+v:''}`,f:v=>hit(B.p.max-B.p.hp+v)},
 pact:{n:'피의 계약',t:'skl',e:1,x:1,r:'r',h:'berserker',v:[2,3],d:v=>`매 턴 시작 시 체력 2를 잃고 힘 +${v}. 소멸`,f:v=>{st(B.p,'pact',v);fxk('pl','buff');sfx('buff')}},
-quick:{n:'빠른 베기',t:'atk',e:0,r:'c',h:'all',v:[3,5],d:v=>`피해 ${v}, 카드 1장 뽑기`,f:v=>{hit(v);draw(1)}},
-rain:{n:'칼날 비',t:'atk',e:1,r:'u',h:'all',v:[4,5],d:v=>`무작위 적에게 피해 ${v} × 4`,f:v=>{for(let k=0;k<4;k++){const a=alive();if(!a.length)break;const t=pick(a);dmg(t,calc(B.p,t,v+pb()))}}},
+quick:{n:'빠른 베기',t:'atk',e:0,r:'c',h:'all',v:[3,4],d:v=>`피해 ${v}, 카드 1장 뽑기`,f:v=>{hit(v);draw(1)}},
+rain:{n:'칼날 비',t:'atk',e:1,r:'u',h:'all',v:[3,4],d:v=>`무작위 적에게 피해 ${v} × 4`,f:v=>{for(let k=0;k<4;k++){const a=alive();if(!a.length)break;const t=pick(a);dmg(t,calc(B.p,t,v+pb()))}}},
 regroup:{n:'재정비',t:'skl',e:1,r:'u',h:'all',v:[2,3],d:v=>`버린 카드 중 무작위 ${v}장을 손으로`,f:v=>{for(let k=0;k<v&&B.disc.length&&B.hand.length<10;k++)B.hand.push(B.disc.splice(R(0,B.disc.length-1),1)[0])}},
 barrier:{n:'수호의 결계',t:'def',e:2,r:'r',h:'all',v:[10,14],d:v=>`방어도 ${v}, 다음 턴까지 방어도 유지`,f:v=>{blk(v);st(B.p,'keep',1)}},
 elixir:{n:'엘릭서',t:'skl',e:1,x:1,r:'r',h:'all',v:[4,6],d:v=>`최대 체력 +${v}, 체력 ${v} 회복. 소멸`,f:v=>{B.p.max+=v;heal(v)}},
-adren:{n:'아드레날린',t:'skl',e:0,x:1,r:'u',h:'all',v:[2,3],d:v=>`행동력 +1, 카드 ${v}장 뽑기. 소멸`,f:v=>{B.energy++;draw(v)}},
-aegis:{n:'수호 방패',t:'def',e:[1,0],r:'r',h:'knight',v:[0,0],d:()=>`현재 방어도를 2배로`,f:()=>blk(B.p.block)},
+adren:{n:'아드레날린',t:'skl',e:0,x:1,r:'u',h:'all',v:[1,2],d:v=>`행동력 +1, 카드 ${v}장 뽑기. 소멸`,f:v=>{B.energy++;draw(v)}},
+aegis:{n:'수호 방패',t:'def',e:[2,1],r:'r',h:'knight',v:[0,0],d:()=>`현재 방어도를 2배로`,f:()=>blk(B.p.block)},
 blizzard:{n:'눈보라',t:'mag',e:2,a:2,r:'r',h:'mage',v:[14,18],d:v=>`적 전체에게 피해 ${v}, 약화 2`,f:v=>{hitAll(v);alive().forEach(e=>st(e,'weak',2))}},
-hemo:{n:'과다출혈',t:'skl',e:[1,0],r:'u',h:'rogue',v:[0,0],d:()=>`모든 적이 자기 출혈만큼 즉시 피해`,f:()=>{alive().forEach(e=>{if(e.st.bleed)dmg(e,e.st.bleed)})}},
+hemo:{n:'과다출혈',t:'skl',e:[1,1],r:'u',h:'rogue',v:[0,0],d:()=>`모든 적이 자기 출혈만큼 즉시 피해`,f:()=>{alive().forEach(e=>{if(e.st.bleed)dmg(e,e.st.bleed)})}},
 bloodrage:{n:'피의 분노',t:'atk',e:1,r:'u',h:'berserker',v:[6,8],d:v=>`피해 ${v} + 잃은 체력 10당 3`,f:v=>hit(v+Math.floor((B.p.max-B.p.hp)/10)*3)},
 };
 const cost=c=>{const e=C[c.id].e;return Array.isArray(e)?e[c.up?1:0]:e};
@@ -903,7 +903,7 @@ const EV=[
 /* ================= 전투 ================= */
 const alive=()=>B.en.filter(e=>e.hp>0);
 function tg(){let t=B.en[B.tgt];if(!t||t.hp<=0){t=alive()[0];if(t)B.tgt=B.en.indexOf(t)}return t}
-const rage=p=>B&&p===B.p&&S.hero==='berserker'&&p.hp<=p.max/2?3:0;
+const rage=p=>B&&p===B.p&&S.hero==='berserker'&&p.hp<=p.max/2?2:0;
 function calc(src,dst,v){v+=(src.st.str||0)+rage(src)+(B&&src===B.p?(dst.st.mark||0):0);if(src.st.weak)v=Math.floor(v*.75);if(dst.st.vul)v=Math.floor(v*1.5);return Math.max(0,v)}
 function dmg(dst,v){const b=Math.min(dst.block,v);dst.block-=b;v-=b;dst.hp=Math.max(0,dst.hp-v);const me=dst===B.p;
  FX.push({id:dst.id,t:v?'-'+v:'막음',c:v?'r':'b',v,k:me?(B.ek?'claw':null):(B.vk||null),col:B.vc});
@@ -928,9 +928,9 @@ function enc(type){const f=S.floor,P=AR().enc;if(type==='boss')return[AR().boss]
 function mkEn(k,i){const d=E[k],gap=Math.max(0,S.act-(d.a||1));let hp=R(d.hp[0],d.hp[1]);hp=Math.round(hp*(1+gap*(d.boss?.4:.5))*(d.boss?1:1+S.floor*.03)*XP().hp*(S.dhp||1)*(asc(1)?1.05:1)*(d.boss&&asc(6)?1.15:1));const e={id:'e'+i,k,n:d.n,hp,max:hp,block:0,st:{},li:-1,step:0};{const sx=gap*2+XP().str+(S.dstr||0)+(asc(3)?1:0)+(asc(9)?1:0);if(sx)e.st.str=sx}nextInt(e);return e}
 function nextInt(e){const ai=E[e.k].ai;let i;if(E[e.k].seq)i=e.step++%ai.length;else do{i=R(0,ai.length-1)}while(i===e.li&&ai.length>1);e.li=i;e.int=ai[i]}
 function startBattle(type){const h=H[S.hero],maxM=h.maxM+(has('crystal')&&h.maxM?1:0)+(h.maxM?((S.sb||{}).mana||0):0);
- B={type,p:{id:'pl',hp:S.hp,max:S.max,block:S.hero==='knight'?10:0,st:{}},en:enc(type).map(mkEn),draw:shuf(S.deck.map(c=>({...c}))),hand:[],disc:[],exh:[],
+ B={type,p:{id:'pl',hp:S.hp,max:S.max,block:S.hero==='knight'?12:0,st:{}},en:enc(type).map(mkEn),draw:shuf(S.deck.map(c=>({...c}))),hand:[],disc:[],exh:[],
   energy:3,maxE:3+(has('core')?1:0),mana:maxM,maxM,drawN:h.drawN-(has('core')?1:0)+(S.ddraw||0),tgt:0,turn:0,bon:0};
- if(has('spike'))st(B.p,'thorns',3);{const b=S.sb||{};if(b.str)st(B.p,'str',b.str);if(b.blk)B.p.block+=b.blk}if(S.hero==='ranger')B.en.forEach(e=>st(e,'mark',2));if(has('cloak'))B.p.block+=8;if(has('scale'))st(B.p,'str',1);
+ if(has('spike'))st(B.p,'thorns',3);{const b=S.sb||{};if(b.str)st(B.p,'str',b.str);if(b.blk)B.p.block+=b.blk}if(S.hero==='ranger')B.en.forEach(e=>st(e,'mark',1));if(has('cloak'))B.p.block+=8;if(has('scale'))st(B.p,'str',1);
  S.scr='battle';playerTurn(true)}
 function playerTurn(first){B.turn++;const p=B.p;if(!first){if(p.st.keep)p.st.keep--;else p.block=0}
  if(p.st.plate)p.block+=p.st.plate;if(has('shell'))p.block+=3;
@@ -981,7 +981,7 @@ function win(){busy=false;if(!B)return;if(S.tut!=null){B=null;META.tut=1;META.sh
 function lose(){busy=false;if(B)S.hp=0;endRun(false);S.scr='lose';jingle(false);render()}
 function endRun(won){if(S.done)return;S.done=1;const X=XP(),fl=won?NA()*13:totFl(),k=S.k;
  const lines=[[`도달 · ${flTxt(fl)}`,fl],[`처치한 적 · ${k.n}마리`,k.n],[`정예 처치 · ${k.e}마리`,k.e*6]];if(k.b)lines.push([`보스 처치 · ${k.b}마리`,k.b*15]);if(won)lines.push(['탑 정복!',60]);
- let tot=lines.reduce((a,b)=>a+b[1],0);{const mult=X.rw*(1+.1*(S.asc||0))*(S.drw||1);if(mult!==1){const bon=Math.round(tot*(mult-1));lines.push([`보상 배율 ×${+mult.toFixed(2)}`,bon]);tot+=bon}}META.shards+=tot;let fr=k.f||0;if(won){const first=!(META.clears[S.exp]>0),g=X.fr*(first?2:1);META.frag=(META.frag||0)+g;fr+=g;META.clears[S.exp]=(META.clears[S.exp]||0)+1;cntAdd('clears',1);if(X.st>=4)cntAdd('hardclear',1);S.first=first;const af=Math.floor((S.asc||0)/3);META.frag+=af;fr+=af;if(!S.daily){const cur=META.asc[S.exp]||0;if((S.asc||0)>=cur&&cur<10){META.asc[S.exp]=(S.asc||0)+1;S.ascUp=META.asc[S.exp]}}}if(S.daily){if(!META.dbest||META.dbest.d!==S.daily||META.dbest.f<fl)META.dbest={d:S.daily,f:fl};if(won&&META.dwin!==S.daily){META.dwin=S.daily;META.frag=(META.frag||0)+5;fr+=5;META.shards+=120;tot+=120;lines.push(['일일 도전 첫 클리어!',120])}}cntAdd('runs',1);cntMax('maxFloor',fl);saveMeta();{const xp=Math.round((fl*8+k.n*3+k.e*15+(k.b||0)*40+(won?150:0))*(1+.1*(S.asc||0))),lb=hlv(S.hero).l;META.hxp=META.hxp||{};META.hxp[S.hero]=(META.hxp[S.hero]||0)+xp;const la=hlv(S.hero).l;if(la>lb){META.shards+=30*(la-lb);tot+=30*(la-lb);lines.push(['레벨 업 보상',30*(la-lb)]);if(la>=10&&lb<10){META.frag=(META.frag||0)+10;fr+=10}}S.xpr={xp,lb,la};saveMeta()}S.res={lines,tot,fr};stat(won);ls.del(KEY)}
+ let tot=lines.reduce((a,b)=>a+b[1],0);{const mult=X.rw*(1+.1*(S.asc||0))*(S.drw||1);if(mult!==1){const bon=Math.round(tot*(mult-1));lines.push([`보상 배율 ×${+mult.toFixed(2)}`,bon]);tot+=bon}}META.shards+=tot;let fr=k.f||0;if(won){const first=!(META.clears[S.exp]>0),g=X.fr*(first?2:1);META.frag=(META.frag||0)+g;fr+=g;META.clears[S.exp]=(META.clears[S.exp]||0)+1;cntAdd('clears',1);if(X.st>=4)cntAdd('hardclear',1);S.first=first;const af=Math.floor((S.asc||0)/3);META.frag+=af;fr+=af;if(!S.daily){const cur=META.asc[S.exp]||0;if((S.asc||0)>=cur&&cur<10){META.asc[S.exp]=(S.asc||0)+1;S.ascUp=META.asc[S.exp]}}}if(S.daily){if(!META.dbest||META.dbest.d!==S.daily||META.dbest.f<fl)META.dbest={d:S.daily,f:fl};if(won&&META.dwin!==S.daily){META.dwin=S.daily;META.frag=(META.frag||0)+5;fr+=5;META.shards+=120;tot+=120;lines.push(['일일 도전 첫 클리어!',120])}}cntAdd('runs',1);cntMax('maxFloor',fl);saveMeta();{const xp=Math.max(60,Math.round((fl*8+k.n*3+k.e*15+(k.b||0)*40+(won?150:0))*(1+.1*(S.asc||0)))),lb=hlv(S.hero).l;META.hxp=META.hxp||{};META.hxp[S.hero]=(META.hxp[S.hero]||0)+xp;const la=hlv(S.hero).l;if(la>lb){META.shards+=30*(la-lb);tot+=30*(la-lb);lines.push(['레벨 업 보상',30*(la-lb)]);if(la>=10&&lb<10){META.frag=(META.frag||0)+10;fr+=10}}S.xpr={xp,lb,la};saveMeta()}S.res={lines,tot,fr};stat(won);ls.del(KEY)}
 function buzz(ms){try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
 
 /* ================= 연출 (공격 이펙트) ================= */
@@ -1162,7 +1162,7 @@ desert:`<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"><defs><l
 });
 /* ================= 새 용사: 궁수 · 성직자 ================= */
 Object.assign(H,{
-ranger:{n:'궁수 세라',sub:'표식과 집중 사격',hp:70,maxM:0,regen:0,drawN:5,tags:['체력 70','마나 없음','손패 5'],p:'전투 시작 시 모든 적에게 표식 2. 표식이 있는 적은 내 공격을 맞을 때마다 표식만큼 피해를 더 받아요.',deck:{shoot:4,guard:4,markc:1,trap:1},lock:500,skins:[['base','기본',0],['elf','숲의 엘프',1000,{hp:5,draw1:1}],['night','밤의 추적자',1800,{str:1,gold:30}],['myth','달빛 사냥꾼',0,{str:1,hp:8,draw1:1},1]]},
+ranger:{n:'궁수 세라',sub:'표식과 집중 사격',hp:70,maxM:0,regen:0,drawN:5,tags:['체력 70','마나 없음','손패 5'],p:'전투 시작 시 모든 적에게 표식 1. 표식이 있는 적은 내 공격을 맞을 때마다 표식만큼 피해를 더 받아요.',deck:{shoot:4,guard:4,markc:1,trap:1},lock:500,skins:[['base','기본',0],['elf','숲의 엘프',1000,{hp:5,draw1:1}],['night','밤의 추적자',1800,{str:1,gold:30}],['myth','달빛 사냥꾼',0,{str:1,hp:8,draw1:1},1]]},
 cleric:{n:'성직자 엘린',sub:'회복과 신성 마법',hp:72,maxM:3,regen:1,drawN:5,tags:['체력 72','마나 3','손패 5'],p:'턴이 끝날 때마다 체력 2 회복. 오래 버티며 신성 마법으로 적을 태웁니다.',deck:{mace:3,holy:2,guard:3,pray2:1,faith:1},lock:500,skins:[['base','기본',0],['abyss','심연의 사제',1000,{mana:1}],['saint','대성녀',1800,{hp:10,regen:1}],['myth','빛의 화신',0,{mana:1,regen:1,hp:8},1]]}
 });
 HK.push('ranger','cleric');
@@ -1182,15 +1182,15 @@ trap:{n:'덫 설치',t:'def',e:1,r:'c',h:'ranger',v:[6,9],d:v=>`방어도 ${v}, 
 volley:{n:'일제 사격',t:'atk',e:1,r:'u',h:'ranger',v:[5,7],d:v=>`적 전체에게 피해 ${v}`,f:v=>hitAll(v)},
 multishot:{n:'연발 사격',t:'atk',e:1,r:'u',h:'ranger',v:[3,4],d:v=>`피해 ${v} × 3`,f:v=>hit(v,3)},
 pierce:{n:'관통 화살',t:'atk',e:2,r:'u',h:'ranger',v:[14,19],d:v=>`피해 ${v}, 대상 표식 +2`,f:v=>{const t=tg();hit(v);if(t&&t.hp>0)st(t,'mark',2)}},
-snipe:{n:'저격',t:'atk',e:2,r:'r',h:'ranger',v:[10,14],d:v=>`피해 ${v} + 대상 표식의 2배`,f:v=>{const t=tg();hit(v+(t?(t.st.mark||0)*2:0))}},
+snipe:{n:'저격',t:'atk',e:2,r:'r',h:'ranger',v:[9,12],d:v=>`피해 ${v} + 대상 표식의 2배`,f:v=>{const t=tg();hit(v+(t?(t.st.mark||0)*2:0))}},
 hunters:{n:'사냥꾼의 본능',t:'skl',e:1,x:1,r:'r',h:'ranger',v:[2,3],d:v=>`매 턴 시작 시 무작위 적에게 표식 ${v}. 소멸`,f:v=>{st(B.p,'hunt',v);fxk('pl','buff');sfx('buff')}},
 mace:{n:'철퇴',t:'atk',e:1,r:'c',h:'cleric',v:[6,9],d:v=>`피해 ${v}`,f:v=>hit(v)},
 holy:{n:'성스러운 빛',t:'mag',e:1,a:1,r:'c',h:'cleric',v:[9,12],d:v=>`피해 ${v}, 체력 3 회복`,f:v=>{hit(v);heal(3)}},
 pray2:{n:'신의 가호',t:'def',e:1,r:'c',h:'cleric',v:[6,9],d:v=>`방어도 ${v}, 약화 해제`,f:v=>{blk(v);B.p.st.weak=0}},
-faith:{n:'믿음',t:'skl',e:0,r:'c',h:'cleric',v:[1,2],d:v=>`마나 +${v}, 카드 1장 뽑기`,f:v=>{addMana(v);draw(1);sfx('mana')}},
+faith:{n:'믿음',t:'skl',e:[1,0],r:'c',h:'cleric',v:[1,2],d:v=>`마나 +${v}, 카드 1장 뽑기`,f:v=>{addMana(v);draw(1);sfx('mana')}},
 burst:{n:'신성 폭발',t:'mag',e:1,a:1,r:'u',h:'cleric',v:[8,11],d:v=>`적 전체에게 피해 ${v}`,f:v=>hitAll(v)},
 sanct:{n:'성역',t:'def',e:2,r:'u',h:'cleric',v:[12,16],d:v=>`방어도 ${v}, 가시 +3`,f:v=>{blk(v);st(B.p,'thorns',3)}},
-bless:{n:'축복',t:'skl',e:1,x:1,r:'u',h:'cleric',v:[2,3],d:v=>`힘 +${v}, 체력 4 회복. 소멸`,f:v=>{st(B.p,'str',v);heal(4);fxk('pl','buff')}},
+bless:{n:'축복',t:'skl',e:1,x:1,r:'u',h:'cleric',v:[1,2],d:v=>`힘 +${v}, 체력 4 회복. 소멸`,f:v=>{st(B.p,'str',v);heal(4);fxk('pl','buff')}},
 renew:{n:'재생의 기도',t:'skl',e:1,x:1,r:'r',h:'cleric',v:[3,4],d:v=>`매 턴 시작 시 체력 ${v} 회복. 소멸`,f:v=>{st(B.p,'regen',v);fxk('pl','heal');sfx('heal')}},
 judgl:{n:'심판의 빛',t:'mag',e:2,a:2,r:'r',h:'cleric',v:[24,32],d:v=>`피해 ${v}, 취약 2`,f:v=>{const t=tg();hit(v);if(t&&t.hp>0)st(t,'vul',2)}}
 });
@@ -1386,14 +1386,14 @@ ascp(i){const k=EK[i];META.ascSel[k]=Math.min(META.asc[k]||0,(META.ascSel[k]||0)
 spd(){OPT.fast=!OPT.fast;ls.set(OKEY,OPT);sfx('click');render()}
 };
 /* ================= v9: 용사 레벨 · 물약 ================= */
-const LVR=[null,null,'시작 최대 체력 +3','전용 카드를 들고 시작','물약 칸 +1 (3칸)','전용 유물을 들고 시작','시작 금화 +30','시작 카드 1장 강화','시작 최대 체력 +5 추가','무작위 물약 1개를 들고 시작','「전설」 칭호 + 신화 조각 10'];
+const LVR=[null,null,'시작 최대 체력 +3','시작 금화 +30','전용 카드를 들고 시작','무작위 물약 1개를 들고 시작','물약 칸 +1 (3칸)','전용 유물을 들고 시작','시작 카드 1장 강화','시작 최대 체력 +5 추가','「전설」 칭호 + 신화 조각 10'];
 const SIG={knight:['riposte','shell'],mage:['ice','mark'],rogue:['flurry','fang'],berserker:['thirst','grail'],ranger:['pierce','glass'],cleric:['sanct','grail']};
-const xpNeed=l=>120+l*90;
+const xpNeed=l=>150+l*135;
 function hlv(k){let x=(META.hxp||{})[k]||0,l=1;while(l<10&&x>=xpNeed(l)){x-=xpNeed(l);l++}return{l,x,need:l<10?xpNeed(l):0}}
-function applyLv(h){const L=hlv(h).l;S.potMax=2+(L>=4?1:0);S.pots=S.pots||[];S.lv=L;
- if(L>=2){S.max+=3;S.hp+=3}if(L>=3)S.deck.push(card(SIG[h][0]));
- if(L>=5){const r=SIG[h][1];if(!S.relics.includes(r)&&!(RL[r].mana&&!H[h].maxM))gainRelic(r)}
- if(L>=6)S.gold+=30;if(L>=7){const c=pick(S.deck.filter(c=>!c.up));if(c)c.up=true}if(L>=8){S.max+=5;S.hp+=5}if(L>=9)S.pots.push(pick(PK))}
+function applyLv(h){const L=hlv(h).l;S.potMax=2+(L>=6?1:0);S.pots=S.pots||[];S.lv=L;
+ if(L>=2){S.max+=3;S.hp+=3}if(L>=3)S.gold+=30;if(L>=4)S.deck.push(card(SIG[h][0]));if(L>=5&&S.pots.length<S.potMax)S.pots.push(pick(PK));
+ if(L>=7){const r=SIG[h][1];if(!S.relics.includes(r)&&!(RL[r].mana&&!H[h].maxM))gainRelic(r)}
+ if(L>=8){const c=pick(S.deck.filter(c=>!c.up));if(c)c.up=true}if(L>=9){S.max+=5;S.hp+=5}}
 const PO={
 heal:{n:'체력 물약',d:'체력 15 회복',c:'#e5452f',f(){heal(15)}},
 str:{n:'힘의 물약',d:'이번 전투 힘 +2',c:'#c9661a',f(){st(B.p,'str',2);fxk('pl','buff');sfx('buff')}},
